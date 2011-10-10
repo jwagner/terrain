@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Swiss Address Cloud</title>
+    <link href='http://fonts.googleapis.com/css?family=Michroma'
+    rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+<body style="height: 100%; width: 100%">
+<div id="header">
+  <h1><a href="http://29a.ch/">29a.ch</a></h1>
+  <p><a href="http://29a.ch/experiments/">More Experiments &amp; Toys</a></p>
+<div id="social">
+  <a href="http://twitter.com/share" class="twitter-share-button"
+    data-url="http://29a.ch/sandbox/2011/addresscloud/"
+    data-text="3.7 million swiss addresses visualized using #webgl"
+    data-count="horizontal" data-via="29a_ch">Tweet</a>
+  <iframe
+    src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2F29a.ch%2Fsandbox%2F2011%2Faddresscloud%2F&amp;layout=button_count&amp;show_faces=true&amp;width=450&amp;action=like&amp;font&amp;colorscheme=light&amp;height=21"
+    scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px;height:20px;" allowTransparency="true"></iframe>
+ <div class="g-plusone" data-size="medium"
+   data-href="http://29a.ch/sandbox/2011/addresscloud/" data-count="true"></div>
+</div> 
+</div> 
+
+<div id="loading">
+  <p class="status">loading code...</p>
+</div>
+<canvas id=c></canvas>
+<div id="youtube">
+  <iframe width="1280" height="720"
+    src="http://www.youtube.com/embed/ORI1Jdk5e5g" frameborder="0"
+    allowfullscreen></iframe>
+</div>
+<div id="footer">
+  Data from <a href="http://www.local.ch/">local.ch</a>
+</div>
+<script src="main.js"></script>
+<script type="text/javascript" src="http://platform.twitter.com/widgets.js" async defer></script>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js" async defer></script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5205069-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>

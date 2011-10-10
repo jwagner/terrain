@@ -1,0 +1,15 @@
+{
+    "mode": "debug",
+    "src": "./src",
+    "build": "./build",
+    "srcurl": "../src/",
+    "globals": ["core", "jQuery", "glMatrix", "webgl-debug"],
+    "entrypoints": {
+        "main": "browser"
+    },
+    "provides": {
+        "jQuery": "./lib/jquery-dev.js",
+        "glMatrix": "./lib/glMatrix.js",
+        "webgl-debug": "./lib/webgl-debug.js"
+    }
+}

@@ -1,0 +1,8 @@
+attribute vec3 position;
+
+#include "transform.glsl"
+
+void main(){
+  transform(position);
+  gl_PointSize = 100.0/depth;
+}
