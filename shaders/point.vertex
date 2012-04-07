@@ -4,5 +4,4 @@ attribute vec3 position;
 
 void main(){
   transform(position);
-  gl_PointSize = 100.0/depth;
 }

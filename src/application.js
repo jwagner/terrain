@@ -41,37 +41,34 @@ console.log('DEBUG=' + DEBUG);
 function prepareScene(){
     sceneGraph = new scene.Graph();
 
-    var vbo = new glUtils.VBO(new Float32Array(resources[DATA])),
-        wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
-        gridVBO = new glUtils.VBO(mesh.grid(1024)),
-        addressTransform;
+    var wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
+        gridVBO = new glUtils.VBO(mesh.wireFrame(mesh.grid(128))),
+        terrainTransform;
 
     globalUniforms = {
 //        time: time
     };
 
-    var addresses = new scene.Material(addressShader, {
+    var terrainNode = new scene.Material(wireFrameTerrainShader, {
                 color: new uniform.Vec3([0.5, 0.01, 0.01])
             }, [ 
-                addressTransform = new scene.Transform([
-                    new scene.PointMesh(vbo),
-                    new scene.SimpleMesh(gridVBO)
+                terrainTransform = new scene.Transform([
+                    new scene.SimpleMesh(gridVBO, gl.LINES)
                 ])
             ]
         ),
         camera = new scene.Camera([
-            addresses
+            terrainNode
         ]);
 
-    camera.position[0] = 305;
-    camera.position[1] = 1500;
-    camera.position[2] = 200;
-    camera.yaw = -0.01;
+    camera.position[0] = 0;
+    camera.position[1] = 0;
+    camera.position[2] = 0;
+    camera.yaw = 0.00;
     camera.pitch = 1.5;
 
-    mat4.rotate(addressTransform.matrix, Math.PI/2, [1, 0, 0]);
-    mat4.scale(addressTransform.matrix, [0.005, -0.005, -0.02]);
-    mat4.translate(addressTransform.matrix, [-600000, -200000, 0]);
+   // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
+    mat4.scale(terrainTransform.matrix, [100, 1, 100]);
 
     camera.far = FAR_AWAY;
     camera.near = 0.1;
@@ -88,7 +85,6 @@ function prepareScene(){
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         gl.enable(gl.BLEND);
         sceneGraph.draw();
-        controller.velocity = clamp(camera.position[1]+10, 10, 10000)/300;
         controller.tick(td);
     };
 
@@ -108,7 +104,7 @@ setStatus('loading data...');
 loader.load([
     'shaders/transform.glsl',
     'shaders/color.frag',
-    'shaders/point.vertex'
+    'shaders/terrain.vertex'
 
 ]);
 

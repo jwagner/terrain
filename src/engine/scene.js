@@ -246,8 +246,9 @@ scene.Mirror.prototype = extend({}, scene.Transform.prototype, {
 
 
 
-scene.SimpleMesh = function SimpleMesh(vbo){
+scene.SimpleMesh = function SimpleMesh(vbo, mode){
     this.vbo = vbo;
+    this.mode = mode || gl.TRIANGLES;
 };
 scene.SimpleMesh.prototype = {
     visit: function (graph) {
@@ -268,17 +269,18 @@ scene.SimpleMesh.prototype = {
         this.vbo.unbind();
     },
     draw: function(){
-        this.vbo.drawTriangles();
+        this.vbo.draw(this.mode);
     }
 };
 
-scene.PointMesh = function PointMesh(vbo){
+scene.pointmesh = function pointmesh(vbo){
     this.vbo = vbo;
 };
-scene.PointMesh.prototype = extend({}, scene.SimpleMesh, {
+scene.pointmesh.prototype = extend({}, scene.simplemesh, {
     draw: function() {
-        this.vbo.drawPoints();
+        this.vbo.drawpoints();
     }
 });
+
 
 })();

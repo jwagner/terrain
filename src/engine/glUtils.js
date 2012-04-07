@@ -13,7 +13,7 @@ glUtils.Texture2D = function Texture2D(image) {
     gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT );
     gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT );
     gl.generateMipmap(gl.TEXTURE_2D);
-}
+};
 glUtils.Texture2D.prototype = {
     bindTexture: function(unit) {
         if(unit !== undefined){
@@ -29,7 +29,7 @@ glUtils.Texture2D.prototype = {
     uniform: function (location) {
         gl.uniform1i(location, this.unit);
     }
-}
+};
 
 glUtils.VBO = function VBO(data){
     this.buffer = gl.createBuffer();
@@ -37,7 +37,7 @@ glUtils.VBO = function VBO(data){
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
     this.unbind();
     this.length = data.length;
-}
+};
 glUtils.VBO.prototype = {
     bind: function() {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
@@ -45,12 +45,9 @@ glUtils.VBO.prototype = {
     unbind: function() {
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
     },
-    drawTriangles: function() {
-        gl.drawArrays(gl.TRIANGLES, 0, this.length/3);
-    },
-    drawPoints: function() {
-        gl.drawArrays(gl.POINTS, 0, this.length/3);
-    },
+    draw: function(mode) {
+        gl.drawArrays(mode, 0, this.length/3);
+    }
 };
 
 glUtils.FBO = function FBO(width, height, format){
@@ -80,7 +77,7 @@ glUtils.FBO = function FBO(width, height, format){
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
     this.unit = -1;
-}
+};
 glUtils.FBO.prototype = $.extend({}, glUtils.Texture2D.prototype, {
     bind: function () {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
@@ -163,7 +160,7 @@ glUtils.fullscreen = function (canvas, scene) {
 };
 
 glUtils.onerror = function(){
-}
+};
 
 
 })();
