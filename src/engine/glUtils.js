@@ -1,6 +1,6 @@
 (function(){
 
-var glUtils = provides('glUtils');
+var glUtils = provides('engine.glUtils');
 
 glUtils.Texture2D = function Texture2D(image) {
     this.texture = gl.createTexture();

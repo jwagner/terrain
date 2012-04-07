@@ -1,5 +1,5 @@
 (function () {
-var clock = provides('clock'),
+var clock = provides('engine.clock'),
     requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;
 
 

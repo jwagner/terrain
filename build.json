@@ -3,7 +3,7 @@
     "src": "./src",
     "build": "./build",
     "srcurl": "../src/",
-    "globals": ["core", "jQuery", "glMatrix", "webgl-debug"],
+    "globals": ["engine.core", "jQuery", "glMatrix", "webgl-debug"],
     "entrypoints": {
         "main": "browser"
     },

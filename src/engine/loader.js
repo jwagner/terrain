@@ -1,5 +1,5 @@
 (function(){
-var loader = provides('loader');
+var loader = provides('engine.loader');
 
 loader.Loader = function Loader(root){
     this.root = root || '';

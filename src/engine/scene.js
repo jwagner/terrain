@@ -1,7 +1,7 @@
 (function(){
-var scene = provides('scene'),
-    glUtils = requires('glUtils'),
-    uniform = requires('uniform');
+var scene = provides('engine.scene'),
+    glUtils = requires('engine.glUtils'),
+    uniform = requires('engine.uniform');
 
 scene.Node = function SceneNode(children){
     this.children = children || [];

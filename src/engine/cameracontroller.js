@@ -1,6 +1,6 @@
 (function(){
 
-var cameracontroller = provides('cameracontroller');
+var cameracontroller = provides('engine.cameracontroller');
 cameracontroller.MouseController = function MouseController(input, camera) {
     this.input = input;
     this.camera = camera;

@@ -1,5 +1,5 @@
 (function(){
-var input = provides('input');
+var input = provides('engine.input');
 
 // mapping keycodes to names
 var keyname = {

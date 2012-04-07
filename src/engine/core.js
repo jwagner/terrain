@@ -1,5 +1,5 @@
 (function(){
-var core = provides('core');
+var core = provides('engine.core');
 
 /*
 * extend extends the properties of arg0

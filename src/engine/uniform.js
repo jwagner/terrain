@@ -1,5 +1,5 @@
 (function(){
-var uniform = provides('uniform');
+var uniform = provides('engine.uniform');
 
 function glValue(set){
     function GlValue(value){

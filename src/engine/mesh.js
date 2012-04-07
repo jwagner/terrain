@@ -1,6 +1,6 @@
 (function(){
 
-var mesh = provides('mesh');
+var mesh = provides('engine.mesh');
 mesh.grid = function(size){
     var buffer = new Float32Array(size*size*6*3),
         i = 0,

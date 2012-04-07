@@ -1,6 +1,6 @@
 (function(){
 
-var shader = provides('shader');
+var shader = provides('engine.shader');
 
 function makeShader(shaderType, source){
     var shader = gl.createShader(shaderType);
