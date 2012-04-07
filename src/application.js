@@ -100,7 +100,7 @@ function prepareScene(){
 
     input.onKeyUp = function(key) {
         console.log(key);
-    }
+    };
 
 }
 
@@ -114,7 +114,7 @@ setStatus('shaders...');
 loader.load([
     'shaders/transform.glsl',
     'shaders/color.frag',
-    'shaders/point.vertex',
+    'shaders/point.vertex'
 
 ]);
 
@@ -132,7 +132,7 @@ function ready(){
 function numberFormat(n){
     var q = ~~(n/1000),
         r = n%1000 + '';
-    if(q == 0)
+    if(q === 0)
         return r;
     while(r.length < 3) {
         r = '0' + r;
@@ -163,7 +163,7 @@ loader.onready = function() {
         glUtils.onerror(canvas,'failed to load points. XHR2 not supported?', 'xhr2-exception');
     }
 
-}
+};
 
 glUtils.onerror = function(canvas, reason, code) {
     window._gaq = window._gaq || [];
@@ -171,7 +171,7 @@ glUtils.onerror = function(canvas, reason, code) {
     alert(reason);
     $('#youtube').show();
     $(canvas).hide();
-}
+};
 
 window.loader = loader;
 
