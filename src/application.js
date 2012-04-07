@@ -42,18 +42,12 @@ function prepareScene(){
     sceneGraph = new scene.Graph();
 
     var vbo = new glUtils.VBO(new Float32Array(resources[DATA])),
-        addressShader = shaderManager.get('point.vertex', 'color.frag'),
-        gridVBO = new glUtils.VBO(mesh.grid(100)),
+        wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
+        gridVBO = new glUtils.VBO(mesh.grid(1024)),
         addressTransform;
 
     globalUniforms = {
-        skyColor: new uniform.Vec3([0.1, 0.15, 0.45]),
-        // looks sexy for some reason
-        groundColor: new uniform.Vec3([0.025, 0.05, 0.1]),
-        sunColor: new uniform.Vec3([1.6, 1.47, 1.29]),
-        sunDirection: new uniform.Vec3([0.0, 0.5, 1.0]),
-        time: time,
-        clip: 1000
+//        time: time
     };
 
     var addresses = new scene.Material(addressShader, {
@@ -106,10 +100,10 @@ function prepareScene(){
 
 
 function setStatus(status){
-    $('#loading .status').text('loading ' + status);
+    $('#loading .status').text(status);
 }
 
-setStatus('shaders...');
+setStatus('loading data...');
 
 loader.load([
     'shaders/transform.glsl',
@@ -121,7 +115,6 @@ loader.load([
 // all assets have been loaded
 function ready(){
     $('#loading').hide();
-    //return  glUtils.onerror();
     $('canvas').show();
     glUtils.getContext(canvas, {debug: DEBUG});
     prepareScene();
@@ -141,33 +134,13 @@ function numberFormat(n){
 }
 
 loader.onready = function() {
-    setStatus('points ...');
-    try{
-        var xhr = new XMLHttpRequest(),
-            self = this;
-        xhr.open('GET', DATA, true);
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = function(data) {
-            resources[DATA] = this.response;
-            ready();
-        };
-        xhr.onprogress = function(e) {
-            setStatus('points (' + numberFormat(~~(e.loaded/12)) + ' / 3 748 071)');
-        };
-        xhr.onerror = function(error) {
-            glUtils.onerror(canvas,'failed to load points. XHR2 not supported?', 'xhr2-onerror');
-        };
-        xhr.send();
-    }
-    catch(e){
-        glUtils.onerror(canvas,'failed to load points. XHR2 not supported?', 'xhr2-exception');
-    }
-
+    setStatus('initializing ...');
+    ready();
 };
 
 glUtils.onerror = function(canvas, reason, code) {
     window._gaq = window._gaq || [];
-    window._gaq.push(['_trackEvent', 'addresscloud', 'webgl-error', code]);
+    window._gaq.push(['_trackEvent', 'terrain', 'webgl-error', code]);
     alert(reason);
     $('#youtube').show();
     $(canvas).hide();

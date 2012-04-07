@@ -1,11 +1,12 @@
 (function(){
 var scene = provides('engine.scene'),
+    mesh = requires('engine.mesh'),
     glUtils = requires('engine.glUtils'),
     uniform = requires('engine.uniform');
 
 scene.Node = function SceneNode(children){
     this.children = children || [];
-}
+};
 scene.Node.prototype = {
     debug: false,
     children: [],
@@ -30,7 +31,7 @@ scene.Node.prototype = {
 scene.Uniforms = function UniformsNode(uniforms, children) {
     this.uniforms = uniforms;
     this.children = children;
-}
+};
 scene.Uniforms.prototype = extend({}, scene.Node.prototype, {
     enter: function(graph) {
         for(var uniform in this.uniforms){
@@ -61,7 +62,7 @@ scene.Graph = function SceneGraph(gl){
     this.viewportWidth = 640;
     this.viewportHeight = 480;
     this.textureUnit = 0;
-}
+};
 scene.Graph.prototype = {
     draw: function() {
         gl.viewport(0, 0, this.viewportWidth, this.viewportHeight);
@@ -91,13 +92,13 @@ scene.Graph.prototype = {
     getShader: function () {
         return this.shaders[this.shaders.length-1];
     }
-}
+};
 
 scene.Material = function Material(shader, uniforms, children) {
     this.shader = shader;
     this.uniforms = uniforms;
     this.children = children;
-}
+};
 scene.Material.prototype = extend({}, scene.Node.prototype, {
     enter: function(graph){
         graph.pushShader(this.shader);
@@ -113,7 +114,7 @@ scene.Material.prototype = extend({}, scene.Node.prototype, {
 scene.RenderTarget = function RenderTarget(fbo, children){
     this.fbo = fbo;
     this.children = children;
-}
+};
 scene.RenderTarget.prototype = extend({}, scene.Node.prototype, {
     enter: function(graph) {
         this.fbo.bind();
@@ -136,7 +137,7 @@ scene.Camera = function Camera(children){
     this.fov = 50;
 
     this.children = children;
-}
+};
 scene.Camera.prototype = extend({}, scene.Node.prototype, {
     enter: function (graph) {
         var projection = this.getProjection(graph),
@@ -182,66 +183,10 @@ scene.Camera.prototype = extend({}, scene.Node.prototype, {
 
 
 scene.Skybox = function SkyboxNode(shader, uniforms) {
-    var mesh = new scene.SimpleMesh(new glUtils.VBO(new Float32Array([
-            // back
-            1, 1, 1,
-            1, -1, 1,
-            -1, -1, 1,
-            
-            1, 1, 1,
-            -1, -1, 1,
-            -1, 1, 1,
-
-            // front
-            -1, 1, -1,
-            -1, -1, -1,
-            1, 1, -1,
-            
-            1, 1, -1,
-            -1, -1, -1,
-            1, -1, -1,
-            // left
-            -1, 1, 1,
-            -1, -1, -1,
-            -1, 1, -1,
-            
-            -1, 1, 1,
-            -1, -1, 1,
-            -1, -1, -1,
-
-            // right
-
-            1, 1, 1,
-            1, 1, -1,
-            1, -1, -1,
-            
-            1, 1, 1,
-            1, -1, -1,
-            1, -1, 1,
-
-            // top
-            1, 1, 1,
-            -1, 1, 1,
-            -1, 1, -1,
-
-            1, 1, -1,
-            1, 1, 1,
-            -1, 1, -1,
-
-            // bottom
-            -1, -1, -1,
-            -1, -1, 1,
-            1, -1, 1,
-
-            -1, -1, -1,
-            1, -1, 1,
-            1, -1, -1
-
-
-        ]))),
-        material = new scene.Material(shader, uniforms, [mesh]);
+    var mesh_ = new scene.SimpleMesh(new glUtils.VBO(mesh.cube(1.0))),
+        material = new scene.Material(shader, uniforms, [mesh_]);
     this.children = [material];
-}
+};
 scene.Skybox.prototype = extend({}, scene.Node.prototype, {
     enter: function(graph){
         graph.pushUniforms();
@@ -257,18 +202,10 @@ scene.Skybox.prototype = extend({}, scene.Node.prototype, {
 });
 
 scene.Postprocess = function PostprocessNode(shader, uniforms) {
-    var mesh = new scene.SimpleMesh(new glUtils.VBO(new Float32Array([
-            -1, 1, 0,
-            -1, -1, 0,
-            1, -1, 0,
-            
-            -1, 1, 0,
-            1, -1, 0,
-            1, 1, 0
-        ]))),
-        material = new scene.Material(shader, uniforms, [mesh]);
+    var mesh_ = new scene.SimpleMesh(new glUtils.VBO(mesh.screen_quad())),
+        material = new scene.Material(shader, uniforms, [mesh_]);
     this.children = [material];
-}
+};
 scene.Postprocess.prototype = scene.Node.prototype;
 
 scene.Transform = function Transform(children){
@@ -276,7 +213,7 @@ scene.Transform = function Transform(children){
     this.matrix = mat4.create();
     mat4.identity(this.matrix);
     this.aux = mat4.create();
-}
+};
 scene.Transform.prototype = extend({}, scene.Node, {
     enter: function(graph) {
         graph.pushUniforms();
@@ -295,7 +232,7 @@ scene.Transform.prototype = extend({}, scene.Node, {
 
 scene.Mirror = function MirrorNode(children){
     scene.Transform.call(this, children);
-}
+};
 scene.Mirror.prototype = extend({}, scene.Transform.prototype, {
     enter: function (graph) {
         gl.cullFace(gl.FRONT);
@@ -311,7 +248,7 @@ scene.Mirror.prototype = extend({}, scene.Transform.prototype, {
 
 scene.SimpleMesh = function SimpleMesh(vbo){
     this.vbo = vbo;
-}
+};
 scene.SimpleMesh.prototype = {
     visit: function (graph) {
         var shader = graph.getShader(),
@@ -337,7 +274,7 @@ scene.SimpleMesh.prototype = {
 
 scene.PointMesh = function PointMesh(vbo){
     this.vbo = vbo;
-}
+};
 scene.PointMesh.prototype = extend({}, scene.SimpleMesh, {
     draw: function() {
         this.vbo.drawPoints();

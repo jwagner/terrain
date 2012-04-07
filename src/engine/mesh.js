@@ -36,4 +36,75 @@ mesh.grid = function(size){
     return buffer;
 };
 
+mesh.screen_quad = function screen_quad() {
+    return new Float32Array([
+            -1, 1, 0,
+            -1, -1, 0,
+            1, -1, 0,
+            
+            -1, 1, 0,
+            1, -1, 0,
+            1, 1, 0
+    ]);
+};
+
+mesh.cube = function cube(scale) {
+    scale = scale || 1;
+    return new Float32Array([
+            // back
+            scale, scale, scale,
+            scale, -scale, scale,
+            -scale, -scale, scale,
+            
+            scale, scale, scale,
+            -scale, -scale, scale,
+            -scale, scale, scale,
+
+            // front
+            -scale, scale, -scale,
+            -scale, -scale, -scale,
+            scale, scale, -scale,
+            
+            scale, scale, -scale,
+            -scale, -scale, -scale,
+            scale, -scale, -scale,
+            // left
+            -scale, scale, scale,
+            -scale, -scale, -scale,
+            -scale, scale, -scale,
+            
+            -scale, scale, scale,
+            -scale, -scale, scale,
+            -scale, -scale, -scale,
+
+            // right
+
+            scale, scale, scale,
+            scale, scale, -scale,
+            scale, -scale, -scale,
+            
+            scale, scale, scale,
+            scale, -scale, -scale,
+            scale, -scale, scale,
+
+            // top
+            scale, scale, scale,
+            -scale, scale, scale,
+            -scale, scale, -scale,
+
+            scale, scale, -scale,
+            scale, scale, scale,
+            -scale, scale, -scale,
+
+            // bottom
+            -scale, -scale, -scale,
+            -scale, -scale, scale,
+            scale, -scale, scale,
+
+            -scale, -scale, -scale,
+            scale, -scale, scale,
+            scale, -scale, -scale
+        ]);
+};
+
 })();
