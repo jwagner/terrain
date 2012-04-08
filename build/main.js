@@ -26,4 +26,5 @@ document.write('<script src="../src/engine/mesh.js" type="text/javascript"></scr
 document.write('<script src="../src/engine/uniform.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/clock.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/scene.js" type="text/javascript"></script>');
+document.write('<script src="../src/engine/terrain.js" type="text/javascript"></script>');
 document.write('<script src="../src/application.js" type="text/javascript"></script>');

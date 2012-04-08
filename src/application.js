@@ -17,6 +17,7 @@ var DEBUG = getHashValue('debug', false),
     FAR_AWAY = 100000,
     scene = requires('engine.scene'),
     mesh = requires('engine.mesh'),
+    terrain = requires('engine.terrain'),
     Loader = requires('engine.loader').Loader,
     ShaderManager = requires('engine.shader').Manager,
     glUtils = requires('engine.glUtils'),
@@ -44,6 +45,7 @@ function prepareScene(){
     var heightmapTexture = new glUtils.Texture2D(resources['gfx/height4k.png']),
         wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
         gridVBO = new glUtils.VBO(mesh.wireFrame(mesh.grid(1024))),
+        scale = 1000,
         terrainTransform;
 
     globalUniforms = {
@@ -55,7 +57,7 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new scene.SimpleMesh(gridVBO, gl.LINES)
+                    new terrain.QuadTree(128, 4)
                 ])
             ]
         ),
@@ -63,14 +65,14 @@ function prepareScene(){
             terrainNode
         ]);
 
-    camera.position[0] = 50;
-    camera.position[1] = 10;
-    camera.position[2] = 100;
+    camera.position[0] = scale/2;
+    camera.position[1] = scale/20;
+    camera.position[2] = scale/2;
     camera.yaw = 0.0;
     camera.pitch = 0.0;
 
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
-    mat4.scale(terrainTransform.matrix, [100000, 10000, 100000]);
+    mat4.scale(terrainTransform.matrix, [scale, scale/10, scale]);
 
     camera.far = FAR_AWAY;
     camera.near = 0.1;
