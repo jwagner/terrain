@@ -41,8 +41,9 @@ console.log('DEBUG=' + DEBUG);
 function prepareScene(){
     sceneGraph = new scene.Graph();
 
-    var wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
-        gridVBO = new glUtils.VBO(mesh.wireFrame(mesh.grid(128))),
+    var heightmapTexture = new glUtils.Texture2D(resources['gfx/height4k.png']),
+        wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
+        gridVBO = new glUtils.VBO(mesh.wireFrame(mesh.grid(1024))),
         terrainTransform;
 
     globalUniforms = {
@@ -50,7 +51,8 @@ function prepareScene(){
     };
 
     var terrainNode = new scene.Material(wireFrameTerrainShader, {
-                color: new uniform.Vec3([0.5, 0.01, 0.01])
+                color: new uniform.Vec3([0.5, 0.01, 0.01]),
+                heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
                     new scene.SimpleMesh(gridVBO, gl.LINES)
@@ -61,14 +63,14 @@ function prepareScene(){
             terrainNode
         ]);
 
-    camera.position[0] = 0;
-    camera.position[1] = 0;
-    camera.position[2] = 0;
-    camera.yaw = 0.00;
-    camera.pitch = 1.5;
+    camera.position[0] = 50;
+    camera.position[1] = 10;
+    camera.position[2] = 100;
+    camera.yaw = 0.0;
+    camera.pitch = 0.0;
 
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
-    mat4.scale(terrainTransform.matrix, [100, 1, 100]);
+    mat4.scale(terrainTransform.matrix, [100000, 10000, 100000]);
 
     camera.far = FAR_AWAY;
     camera.near = 0.1;
@@ -102,6 +104,7 @@ function setStatus(status){
 setStatus('loading data...');
 
 loader.load([
+    'gfx/height4k.png',
     'shaders/transform.glsl',
     'shaders/color.frag',
     'shaders/terrain.vertex'

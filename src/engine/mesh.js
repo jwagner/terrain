@@ -36,6 +36,7 @@ mesh.grid = function(size){
     return buffer;
 };
 
+// convert a gl.TRIANGLES mesh into a wireframe for rendering with gl.LINES
 mesh.wireFrame = function(input){
     var output = new Float32Array(input.length*2),
         triangles = input.length/9;

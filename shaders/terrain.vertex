@@ -1,0 +1,10 @@
+attribute vec3 position;
+uniform sampler2D heightSampler;
+
+#include "transform.glsl"
+
+
+void main(){
+    vec4 heightSample = texture2D(heightSampler, vec2(position.x, position.z));
+    transform(vec3(position.x, heightSample.r, position.z));
+}
