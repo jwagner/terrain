@@ -273,14 +273,4 @@ scene.SimpleMesh.prototype = {
     }
 };
 
-scene.pointmesh = function pointmesh(vbo){
-    this.vbo = vbo;
-};
-scene.pointmesh.prototype = extend({}, scene.simplemesh, {
-    draw: function() {
-        this.vbo.drawpoints();
-    }
-});
-
-
 })();

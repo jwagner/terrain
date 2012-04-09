@@ -14,7 +14,7 @@ function provides(namespace) {
 }
 requires = provides;
 document.write('<script src="../lib/webgl-debug.js" type="text/javascript"></script>');
-document.write('<script src="../lib/glMatrix.js" type="text/javascript"></script>');
+document.write('<script src="../lib/gl-matrix.js" type="text/javascript"></script>');
 document.write('<script src="../lib/jquery-dev.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/core.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/input.js" type="text/javascript"></script>');

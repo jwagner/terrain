@@ -52,27 +52,27 @@ function prepareScene(){
 //        time: time
     };
 
-    var terrainNode = new scene.Material(wireFrameTerrainShader, {
+    var fakeCamera = new scene.Camera([]);
+    var camera = new scene.Camera([]),
+        terrainNode = new scene.Material(wireFrameTerrainShader, {
                 color: new uniform.Vec3([0.5, 0.01, 0.01]),
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(128, 4)
+                    new terrain.QuadTree(fakeCamera, 128, 6)
                 ])
             ]
-        ),
-        camera = new scene.Camera([
-            terrainNode
-        ]);
+        );
+    camera.children.push(terrainNode);
 
-    camera.position[0] = scale/2;
-    camera.position[1] = scale/20;
-    camera.position[2] = scale/2;
+    vec3.set([scale/2, scale/20, scale/2], camera.position);
+    vec3.set(camera.position, fakeCamera.position);
+
     camera.yaw = 0.0;
     camera.pitch = 0.0;
 
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
-    mat4.scale(terrainTransform.matrix, [scale, scale/10, scale]);
+    mat4.scale(terrainTransform.matrix, [scale, scale, scale]);
 
     camera.far = FAR_AWAY;
     camera.near = 0.1;
@@ -83,6 +83,8 @@ function prepareScene(){
 
     controller = new MouseController(input, camera);
 
+    var outOfBody = false;
+
     clock.ontick = function(td) {
         time += td;
         gl.disable(gl.DEPTH_TEST);
@@ -90,9 +92,15 @@ function prepareScene(){
         gl.enable(gl.BLEND);
         sceneGraph.draw();
         controller.tick(td);
+        if(!outOfBody){
+            vec3.set(camera.position, fakeCamera.position);
+        }
     };
 
     input.onKeyUp = function(key) {
+        if(key == 'SPACE'){
+            outOfBody = !outOfBody;
+        }
         console.log(key);
     };
 

@@ -3,13 +3,13 @@
     "src": "./src",
     "build": "./build",
     "srcurl": "../src/",
-    "globals": ["engine.core", "jQuery", "glMatrix", "webgl-debug"],
+    "globals": ["engine.core", "jQuery", "gl-matrix", "webgl-debug"],
     "entrypoints": {
         "main": "browser"
     },
     "provides": {
         "jQuery": "./lib/jquery-dev.js",
-        "glMatrix": "./lib/glMatrix.js",
+        "gl-matrix": "./lib/gl-matrix.js",
         "webgl-debug": "./lib/webgl-debug.js"
     }
 }
