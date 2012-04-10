@@ -32,8 +32,6 @@ var DEBUG = getHashValue('debug', false),
     resources = loader.resources,
     shaderManager = new ShaderManager(resources),
     time = 0,
-    targetExposure = 0.0,
-    rotation = false,
     globalUniforms,
     controller;
 
@@ -44,8 +42,7 @@ function prepareScene(){
 
     var heightmapTexture = new glUtils.Texture2D(resources['gfx/height4k.png']),
         wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
-        gridVBO = new glUtils.VBO(mesh.wireFrame(mesh.grid(1024))),
-        scale = 1000,
+        scale = 163840,
         terrainTransform;
 
     globalUniforms = {
@@ -82,6 +79,7 @@ function prepareScene(){
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     controller = new MouseController(input, camera);
+    controller.velocity = 100;
 
     var outOfBody = false;
 
