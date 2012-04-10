@@ -46,7 +46,7 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
     },
     visitNode: function(graph, left, top, scale, level) {
         var x = this.localCameraPosition[0]-left-scale*0.5,
-            y = this.localCameraPosition[1],
+            y = this.localCameraPosition[1]-scale*0.5,
             z = this.localCameraPosition[2]-top-scale*0.5,
             distance = Math.sqrt(x*x + y*y + z*z);
 

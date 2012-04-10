@@ -8,5 +8,5 @@ uniform vec3 heightMapTransform;
 void main(){
     vec4 heightSample = texture2D(heightSampler,
         vec2(position.x, position.z)*heightMapTransform.z+heightMapTransform.xy);
-    transform(vec3(position.x, heightSample.r*0.1, position.z));
+    transform(vec3(position.x, heightSample.r, position.z));
 }

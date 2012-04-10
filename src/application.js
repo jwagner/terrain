@@ -14,7 +14,7 @@ function getHashValue(name, default_){
 
 var DEBUG = getHashValue('debug', false),
     DATA = 'data/data.gz_',
-    FAR_AWAY = 100000,
+    FAR_AWAY = 10000,
     scene = requires('engine.scene'),
     mesh = requires('engine.mesh'),
     terrain = requires('engine.terrain'),
@@ -43,6 +43,7 @@ function prepareScene(){
     var heightmapTexture = new glUtils.Texture2D(resources['gfx/height4k.png']),
         wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
         scale = 163840,
+        vscale = 6500,
         terrainTransform;
 
     globalUniforms = {
@@ -52,7 +53,7 @@ function prepareScene(){
     var fakeCamera = new scene.Camera([]);
     var camera = new scene.Camera([]),
         terrainNode = new scene.Material(wireFrameTerrainShader, {
-                color: new uniform.Vec3([0.5, 0.01, 0.01]),
+                color: new uniform.Vec3([0.5, 0.3, 0.2]),
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
@@ -62,17 +63,17 @@ function prepareScene(){
         );
     camera.children.push(terrainNode);
 
-    vec3.set([scale/2, scale/20, scale/2], camera.position);
+    vec3.set([scale/2, 0, scale/2], camera.position);
     vec3.set(camera.position, fakeCamera.position);
 
     camera.yaw = 0.0;
     camera.pitch = 0.0;
 
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
-    mat4.scale(terrainTransform.matrix, [scale, scale, scale]);
+    mat4.scale(terrainTransform.matrix, [scale, vscale, scale]);
 
-    camera.far = FAR_AWAY;
-    camera.near = 0.1;
+    camera.far = scale*2;
+    camera.near = 1.0;
 
     sceneGraph.root.append(camera);
 
@@ -98,6 +99,12 @@ function prepareScene(){
     input.onKeyUp = function(key) {
         if(key == 'SPACE'){
             outOfBody = !outOfBody;
+            if(outOfBody){
+                controller.velocity *= 10;
+            }
+            else {
+                controller.velocity /= 10;
+            }
         }
         console.log(key);
     };
