@@ -5,7 +5,8 @@
     "srcurl": "../src/",
     "globals": ["engine.core", "jQuery", "gl-matrix", "webgl-debug"],
     "entrypoints": {
-        "main": "browser"
+        "main": "browser",
+        "engine.test": "browser"
     },
     "provides": {
         "jQuery": "./lib/jquery-dev.js",

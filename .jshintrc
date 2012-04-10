@@ -12,6 +12,7 @@
       "console",
       "WebGLDebugUtils",
       "clamp",
+      "buster",
       "alert"
     ],
     "browser" : true,
