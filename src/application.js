@@ -13,8 +13,8 @@ function getHashValue(name, default_){
 }
 
 var DEBUG = getHashValue('debug', false),
-    DATA = 'data/data.gz_',
     FAR_AWAY = 10000,
+    HEIGHTMAP = 'gfx/height4k.png',
     scene = requires('engine.scene'),
     mesh = requires('engine.mesh'),
     terrain = requires('engine.terrain'),
@@ -26,6 +26,7 @@ var DEBUG = getHashValue('debug', false),
     MouseController = requires('engine.cameracontroller').MouseController,
     InputHandler = requires('engine.input').Handler,
     canvas = document.getElementById('c'),
+    debug = document.getElementById('debug'),
     clock = new Clock(),
     input = new InputHandler(canvas),
     loader = new Loader(),
@@ -40,7 +41,7 @@ console.log('DEBUG=' + DEBUG);
 function prepareScene(){
     sceneGraph = new scene.Graph();
 
-    var heightmapTexture = new glUtils.Texture2D(resources['gfx/height4k.png']),
+    var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
         wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
         scale = 163840,
         vscale = 6500,
@@ -57,13 +58,13 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 128, 6)
+                    new terrain.QuadTree(fakeCamera, 128, 4)
                 ])
             ]
         );
     camera.children.push(terrainNode);
 
-    vec3.set([scale/2, 0, scale/2], camera.position);
+    vec3.set([scale/2, 1000, scale/2], camera.position);
     vec3.set(camera.position, fakeCamera.position);
 
     camera.yaw = 0.0;
@@ -91,6 +92,12 @@ function prepareScene(){
         gl.enable(gl.BLEND);
         sceneGraph.draw();
         controller.tick(td);
+
+        debug.innerHTML = (
+            'drawCalls: ' + sceneGraph.statistics.drawCalls + '<br>' +
+            'vertices: ' + sceneGraph.statistics.vertices + '<br>'
+        );
+
         if(!outOfBody){
             vec3.set(camera.position, fakeCamera.position);
         }
@@ -119,7 +126,7 @@ function setStatus(status){
 setStatus('loading data...');
 
 loader.load([
-    'gfx/height4k.png',
+    HEIGHTMAP,
     'shaders/transform.glsl',
     'shaders/color.frag',
     'shaders/terrain.vertex'

@@ -8,6 +8,53 @@ var terrain = provides('engine.terrain'),
 
 var auxVec3 = vec3.create();
 
+
+// compute the closest point on an AABB to a point
+function closestPointPointAABB(point, box, dest){
+    var v;
+
+    v = point[0];
+    if(v < box[0]) v = box[0];
+    if(v > box[3]) v = box[3];
+    dest[0] = v;
+
+    v = point[1];
+    if(v < box[1]) v = box[1];
+    if(v > box[4]) v = box[4];
+    dest[1] = v;
+
+    v = point[2];
+    if(v < box[2]) v = box[2];
+    if(v > box[5]) v = box[5];
+    dest[2] = v;
+}
+
+function distancePointAABBSquared(point, box){
+    var distance = 0.0,
+        v, a;
+
+    v = point[0];
+    a = box[0];
+    if(v < a) distance += (a - v)*(a - v);
+    a = box[3];
+    if(v > a) distance += (v - a)*(v - a);
+
+    v = point[1];
+    a = box[1];
+    if(v < a) distance += (a - v)*(a - v);
+    a = box[4];
+    if(v > a) distance += (v - a)*(v - a);
+
+    v = point[2];
+    a = box[2];
+    if(v < a) distance += (a - v)*(a - v);
+    a = box[5];
+    if(v > a) distance += (v - a)*(v - a);
+
+    return distance;
+}
+
+
 /**
   Quadtree based terrain LOD system
 
@@ -45,13 +92,10 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         graph.popUniforms();
     },
     visitNode: function(graph, left, top, scale, level) {
-        var x = this.localCameraPosition[0]-left-scale*0.5,
-            y = this.localCameraPosition[1]-scale*0.5,
-            z = this.localCameraPosition[2]-top-scale*0.5,
-            distance = Math.sqrt(x*x + y*y + z*z);
+        var aabb = [left, 0, top, left+scale, 1, top+scale],
+            distance = distancePointAABBSquared(this.localCameraPosition, aabb);
 
-
-        if(distance > scale*3.4 || level === this.depth){
+        if(distance > scale*scale*50 || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
             mat4.scale(this.matrix, [scale, 1, scale], this.matrix);
             this.heightMapTransformUniform.value[0] = left;

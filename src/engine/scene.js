@@ -62,9 +62,17 @@ scene.Graph = function SceneGraph(gl){
     this.viewportWidth = 640;
     this.viewportHeight = 480;
     this.textureUnit = 0;
+    this.statistics = {
+        drawCalls: 0,
+        vertices: 0
+    };
 };
 scene.Graph.prototype = {
     draw: function() {
+
+        this.statistics.drawCalls = 0;
+        this.statistics.vertices = 0;
+
         gl.viewport(0, 0, this.viewportWidth, this.viewportHeight);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         //gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -264,6 +272,10 @@ scene.SimpleMesh.prototype = {
         gl.vertexAttribPointer(location, 3, gl.FLOAT, normalized, stride, offset);
 
         shader.uniforms(graph.uniforms);
+
+        graph.statistics.drawCalls ++;
+        graph.statistics.vertices += this.vbo.length/3;
+
         this.draw();
 
         this.vbo.unbind();
