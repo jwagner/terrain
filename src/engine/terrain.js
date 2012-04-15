@@ -70,7 +70,10 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
     this.camera = camera;
     this.resolution = resolution;
     this.depth = depth;
-    this.localCameraPosition = vec3.create();
+    this.topLeftWorldSpace = vec3.create([0, 0, 0]);
+    this.scaleWorldSpace = vec4.create([0, 0, 0, 0]);
+    this.worldScale = 1.0;
+    this.worldHeight = 1.0;
 
     this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
     this.matrix = mat4.identity();
@@ -81,10 +84,14 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
 terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
     visit: function(graph) {
         graph.pushUniforms();
-        mat4.inverse(graph.uniforms.modelTransform.value, this.inverseModelTransform);
-        mat4.multiplyVec3(this.inverseModelTransform, this.camera.position, this.localCameraPosition);
+        var modelTransform = graph.uniforms.modelTransform.value;
+        mat4.multiplyVec3(modelTransform, [0, 0, 0], this.topLeftWorldSpace);
+        mat4.multiplyVec4(modelTransform, [1, 1, 1, 0], this.scaleWorldSpace);
+        assert(this.scaleWorldSpace[0] == this.scaleWorldSpace[2], 'world space scale should be uniform');
+        this.worldScale = this.scaleWorldSpace[0];
+        this.worldHeight = this.scaleWorldSpace[1];
 
-        mat4.set(graph.uniforms.modelTransform.value, this.matrix);
+        mat4.set(modelTransform, this.matrix);
 
         graph.uniforms.modelTransform = this.matrixUniform;
         graph.uniforms.heightMapTransform = this.heightMapTransformUniform;
@@ -92,10 +99,11 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         graph.popUniforms();
     },
     visitNode: function(graph, left, top, scale, level) {
-        var aabb = [left, 0, top, left+scale, 1, top+scale],
-            distance = distancePointAABBSquared(this.localCameraPosition, aabb);
+        var aabb = [this.topLeftWorldSpace[0]+this.worldScale*left, this.topLeftWorldSpace[1], this.topLeftWorldSpace[2]+this.worldScale*top,
+                    this.worldScale, this.worldHeight, this.worldScale],
+            distance = distancePointAABBSquared(this.camera.position, aabb);
 
-        if(distance > scale*scale*50 || level === this.depth){
+        if(Math.sqrt(distance) > scale*this.worldScale || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
             mat4.scale(this.matrix, [scale, 1, scale], this.matrix);
             this.heightMapTransformUniform.value[0] = left;

@@ -2,6 +2,7 @@
     "predef": [
       "provides",
       "requires",
+      "assert",
       "io",
       "gl",
       "extend",
