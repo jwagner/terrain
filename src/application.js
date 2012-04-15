@@ -58,7 +58,7 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 128, 4)
+                    new terrain.QuadTree(fakeCamera, 32, 5)
                 ])
             ]
         );
@@ -81,7 +81,7 @@ function prepareScene(){
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 100;
+    controller.velocity = 1000;
 
     var outOfBody = false;
 
@@ -106,12 +106,6 @@ function prepareScene(){
     input.onKeyUp = function(key) {
         if(key == 'SPACE'){
             outOfBody = !outOfBody;
-            if(outOfBody){
-                controller.velocity *= 10;
-            }
-            else {
-                controller.velocity /= 10;
-            }
         }
         console.log(key);
     };

@@ -99,11 +99,13 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         graph.popUniforms();
     },
     visitNode: function(graph, left, top, scale, level) {
-        var aabb = [this.topLeftWorldSpace[0]+this.worldScale*left, this.topLeftWorldSpace[1], this.topLeftWorldSpace[2]+this.worldScale*top,
-                    this.worldScale, this.worldHeight, this.worldScale],
-            distance = distancePointAABBSquared(this.camera.position, aabb);
+        var x = this.topLeftWorldSpace[0]+this.worldScale*left,
+            y = this.topLeftWorldSpace[1],
+            z = this.topLeftWorldSpace[2]+this.worldScale*top,
+            aabb = [x, y, z, x+this.worldScale*scale, this.worldHeight, z+this.worldScale*scale],
+            distance = Math.sqrt(distancePointAABBSquared(this.camera.position, aabb));
 
-        if(Math.sqrt(distance) > scale*this.worldScale || level === this.depth){
+        if(distance > scale*this.worldScale*3.7 || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
             mat4.scale(this.matrix, [scale, 1, scale], this.matrix);
             this.heightMapTransformUniform.value[0] = left;
