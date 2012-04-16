@@ -5,7 +5,7 @@ cameracontroller.MouseController = function MouseController(input, camera) {
     this.input = input;
     this.camera = camera;
     this.velocity = 1.0;
-}
+};
 cameracontroller.MouseController.prototype = {
     tick: function(td) {
         if(this.input.mouse.down){
@@ -34,6 +34,6 @@ cameracontroller.MouseController.prototype = {
         mat4.multiplyVec3(inverseRotation, direction);
         vec3.add(this.camera.position, direction);
     }
-}
+};
 
 })();

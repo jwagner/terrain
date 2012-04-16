@@ -74,11 +74,14 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
     this.scaleWorldSpace = vec4.create([0, 0, 0, 0]);
     this.worldScale = 1.0;
     this.worldHeight = 1.0;
+    this.cameraPositionUniform = new uniform.Vec3(this.camera.position);
+    this.distanceScale = 3.7;
 
     this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
     this.matrix = mat4.identity();
     this.matrixUniform = new uniform.Mat4(this.matrix);
-    this.heightMapTransformUniform = new uniform.Vec3(vec3.create([0, 0, 1]));
+    this.heightMapTransformUniform = new uniform.Vec4(vec4.create([0, 0, 1, 1]));
+    this.uniform = new uniform.Vec4(vec4.create([0, 0, 1, 1]));
     this.inverseModelTransform = mat4.create();
 };
 terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
@@ -95,6 +98,7 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
 
         graph.uniforms.modelTransform = this.matrixUniform;
         graph.uniforms.heightMapTransform = this.heightMapTransformUniform;
+        graph.uniforms.terrainCameraPosition = this.cameraPositionUniform;
         this.visitNode(graph, 0, 0, 1, 0);
         graph.popUniforms();
     },
@@ -105,12 +109,14 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
             aabb = [x, y, z, x+this.worldScale*scale, this.worldHeight, z+this.worldScale*scale],
             distance = Math.sqrt(distancePointAABBSquared(this.camera.position, aabb));
 
-        if(distance > scale*this.worldScale*3.7 || level === this.depth){
+        if(distance > scale*this.worldScale*this.distanceScale || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
             mat4.scale(this.matrix, [scale, 1, scale], this.matrix);
+            var prevLevel = scale*2.0*this.worldScale*this.distanceScale;
             this.heightMapTransformUniform.value[0] = left;
             this.heightMapTransformUniform.value[1] = top;
             this.heightMapTransformUniform.value[2] = scale;
+            this.heightMapTransformUniform.value[3] = prevLevel;
             this.mesh.visit(graph);
             mat4.scale(this.matrix, [1/scale, 1, 1/scale], this.matrix);
             mat4.translate(this.matrix, [-left, 0, -top], this.matrix);

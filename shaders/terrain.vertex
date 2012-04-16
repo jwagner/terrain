@@ -1,6 +1,8 @@
 attribute vec3 position;
 uniform sampler2D heightSampler;
-uniform vec3 heightMapTransform;
+uniform vec4 heightMapTransform;
+uniform vec3 terrainCameraPosition;
+varying float morph;
 
 #include "transform.glsl"
 
@@ -9,4 +11,6 @@ void main(){
     vec4 heightSample = texture2D(heightSampler,
         vec2(position.x, position.z)*heightMapTransform.z+heightMapTransform.xy);
     transform(vec3(position.x, heightSample.r, position.z));
+    float lod = abs(distance(worldPosition, terrainCameraPosition))/heightMapTransform.w;
+    morph = clamp((lod-0.9)*10.0, 0.0, 1.0);
 }
