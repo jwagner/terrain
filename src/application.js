@@ -58,7 +58,7 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 64, 6)
+                    new terrain.QuadTree(fakeCamera, 128, 5)
                 ])
             ]
         );
@@ -81,7 +81,7 @@ function prepareScene(){
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 1000;
+    controller.velocity = 100;
 
     var outOfBody = false;
 

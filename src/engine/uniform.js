@@ -26,5 +26,9 @@ uniform.Vec4 = glValue(function (location) {
 uniform.Int = glValue(function (location) {
     gl.uniformi(location, this.value);
 });
+uniform.Float = glValue(function (location) {
+    gl.uniform1f(location, this.value);
+});
+
 
 })();

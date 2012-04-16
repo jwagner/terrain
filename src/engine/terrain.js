@@ -81,7 +81,7 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
     this.matrix = mat4.identity();
     this.matrixUniform = new uniform.Mat4(this.matrix);
     this.heightMapTransformUniform = new uniform.Vec4(vec4.create([0, 0, 1, 1]));
-    this.uniform = new uniform.Vec4(vec4.create([0, 0, 1, 1]));
+    this.resolutionUniform = new uniform.Float(resolution);
     this.inverseModelTransform = mat4.create();
 };
 terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
@@ -99,6 +99,7 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         graph.uniforms.modelTransform = this.matrixUniform;
         graph.uniforms.heightMapTransform = this.heightMapTransformUniform;
         graph.uniforms.terrainCameraPosition = this.cameraPositionUniform;
+        graph.uniforms.terrainResolution = this.resolutionUniform;
         this.visitNode(graph, 0, 0, 1, 0);
         graph.popUniforms();
     },
