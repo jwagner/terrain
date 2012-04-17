@@ -44,7 +44,7 @@ function prepareScene(){
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
         wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
         scale = 163840,
-        vscale = 6500,
+        vscale = 6500*2,
         terrainTransform;
 
     globalUniforms = {
@@ -58,7 +58,7 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 128, 5)
+                    new terrain.QuadTree(fakeCamera, 128, 6)
                 ])
             ]
         );
@@ -81,7 +81,7 @@ function prepareScene(){
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 100;
+    controller.velocity = 1000;
 
     var outOfBody = false;
 
@@ -100,6 +100,10 @@ function prepareScene(){
 
         if(!outOfBody){
             vec3.set(camera.position, fakeCamera.position);
+            fakeCamera.yaw = camera.yaw;
+            fakeCamera.pitch = camera.pitch;
+            fakeCamera.far = camera.far;
+            fakeCamera.near = camera.near;
         }
     };
 

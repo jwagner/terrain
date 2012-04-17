@@ -88,7 +88,7 @@ canvas {
 }
 
 #debug {
-    z-index: 2;
+    z-index: 200;
     position: absolute;
     right: 50px;
     top: 50px;
