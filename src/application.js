@@ -58,7 +58,7 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 128, 6)
+                    new terrain.QuadTree(fakeCamera, 32, 7)
                 ])
             ]
         );

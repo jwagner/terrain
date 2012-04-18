@@ -54,10 +54,6 @@ function distancePointAABBSquared(point, box){
     return distance;
 }
 
-function pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz) {
-    return (lx*qx + ly*qy + lz*qz + lw > 0 );
-}
-
 function checkFrustumAABB(frustum, aabb){
     // plane
     for(var i = 0; i < 6; i++) {
@@ -70,56 +66,53 @@ function checkFrustumAABB(frustum, aabb){
             qx = aabb[0],
             qy = aabb[1],
             qz = aabb[2];
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
         //if(lx*qx + ly*qy + lz*qz + lw < 0 ) p ++;
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
 
         qx = aabb[3];
         qy = aabb[1];
         qz = aabb[2];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
  
         qx = aabb[0];
         qy = aabb[4];
         qz = aabb[2];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
 
         qx = aabb[3];
         qy = aabb[4];
         qz = aabb[2];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
 
         qx = aabb[0];
         qy = aabb[1];
         qz = aabb[5];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
 
         qx = aabb[3];
         qy = aabb[1];
         qz = aabb[5];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
 
         qx = aabb[0];
         qy = aabb[4];
         qz = aabb[5];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
 
         qx = aabb[3];
         qy = aabb[4];
         qz = aabb[5];
-        if(pointPlaneCheck(lx, ly, lz, lw, qx, qy, qz)) p++;
-        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) p++;
+        if((lx*qx + ly*qy + lz*qz + lw > 0)) continue;
+        //if(lx*(qx-lx*lw) + ly*(qy-ly*lw) + lz*(qz-lz*lw) + lw < 0) continue;
 
-        // outside
-        if(p === 0) {
-            return false;
-        }
+        return false;
 
     }
     // inside
