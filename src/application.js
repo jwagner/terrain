@@ -42,7 +42,7 @@ function prepareScene(){
     sceneGraph = new scene.Graph();
 
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
-        wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'color.frag'),
+        wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'terrain.frag'),
         scale = 163840,
         vscale = 6500*2,
         terrainTransform;
@@ -58,7 +58,7 @@ function prepareScene(){
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 32, 7)
+                    new terrain.QuadTree(fakeCamera, 128, 7)
                 ])
             ]
         );
@@ -87,9 +87,9 @@ function prepareScene(){
 
     clock.ontick = function(td) {
         time += td;
-        gl.disable(gl.DEPTH_TEST);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-        gl.enable(gl.BLEND);
+        //gl.disable(gl.DEPTH_TEST);
+        //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        //gl.enable(gl.BLEND);
         sceneGraph.draw();
         controller.tick(td);
 
@@ -126,7 +126,7 @@ setStatus('loading data...');
 loader.load([
     HEIGHTMAP,
     'shaders/transform.glsl',
-    'shaders/color.frag',
+    'shaders/terrain.frag',
     'shaders/terrain.vertex'
 
 ]);

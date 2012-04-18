@@ -71,11 +71,11 @@ Shader.prototype = {
 shader.Manager = function ShaderManager(resources){
     this.resources = resources;
     this.shaders = [];
-}
+};
 shader.Manager.prototype = {
     prefix: 'shaders/',
     includeExpression: /#include "([^"]+)"/g,
-    preprocess: function(content) {
+    preprocess: function(name, content) {
         return content.replace(this.includeExpression, function (_, name) {
             return this.getSource(name);
         }.bind(this));
@@ -85,7 +85,7 @@ shader.Manager.prototype = {
         if(!content) {
             throw 'shader not found: ' + name;
         }
-        return this.preprocess(content);
+        return this.preprocess(name, content);
     },
     get: function(vertex, frag) {
         if(!frag) {
@@ -98,6 +98,6 @@ shader.Manager.prototype = {
         }
         return this.shaders[key];
     }
-}
+};
 
 })();

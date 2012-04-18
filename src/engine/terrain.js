@@ -194,6 +194,7 @@ frustum.extract = function(mat, dest) {
 */
 
 terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
+    var wireframe = false;
     this.camera = camera;
     this.resolution = resolution;
     this.depth = depth;
@@ -204,7 +205,12 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
     this.cameraPositionUniform = new uniform.Vec3(this.camera.position);
     this.distanceScale = 3.7;
 
-    this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
+    if(wireframe){
+        this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
+    }
+    else {
+        this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.grid(resolution)), gl.TRIANGLES);
+    }
     this.matrix = mat4.identity();
     this.matrixUniform = new uniform.Mat4(this.matrix);
     this.heightMapTransformUniform = new uniform.Vec4(vec4.create([0, 0, 1, 1]));

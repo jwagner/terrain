@@ -4,19 +4,36 @@ uniform vec4 heightMapTransform;
 uniform vec3 terrainCameraPosition;
 uniform float terrainResolution;
 varying float morph;
-varying vec2 offset;
+varying vec3 s;
+varying vec3 t;
+varying vec3 n;
 
 #include "transform.glsl"
 
 
 void main(){
-    transform(vec3(position.x, 0.0, position.z));
-    float lod = abs(distance(worldPosition, terrainCameraPosition))/heightMapTransform.w;
+    vec4 worldPosition4 = modelTransform*vec4(position, 1.0);
+
+    float lod = abs(distance(worldPosition4.xyz, terrainCameraPosition))/heightMapTransform.w;
     morph = clamp((lod-0.9)*10.0, 0.0, 1.0);
     vec2 uneven = fract(position.xz*terrainResolution*0.5)*2.0;
     vec2 morphedPosition = position.xz - uneven*(1.0/terrainResolution)*morph;
-    offset = uneven*morph;
+    vec2 offset = uneven*morph;
     vec2 uv = morphedPosition*heightMapTransform.z+heightMapTransform.xy;
+
+    // calculate tangent space
+    // height
+    float pixel = heightMapTransform.z/terrainResolution;
+    float a = 16000.0*heightMapTransform.z;
+    float left = texture2D(heightSampler, vec2(uv.x-pixel, uv.y)).r;
+    float right = texture2D(heightSampler, vec2(uv.x+pixel, uv.y)).r;
+    float top = texture2D(heightSampler, vec2(uv.x, uv.y-pixel)).r;
+    float bottom = texture2D(heightSampler, vec2(uv.x, uv.y+pixel)).r;
+
+    s = vec3(1, (right-left)*a, 0);
+    t = vec3(0, (bottom-top)*a, 1);
+    n = cross(s, t);
+
     vec4 heightSample = texture2D(heightSampler, uv);
 
     transform(vec3(morphedPosition.x, heightSample.r, morphedPosition.y));
