@@ -44,25 +44,31 @@ function prepareScene(){
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
         wireFrameTerrainShader = shaderManager.get('terrain.vertex', 'terrain.frag'),
         scale = 163840,
-        vscale = 6500*2,
+        vscale = 6500,
         terrainTransform;
 
     globalUniforms = {
+        sunColor: new uniform.Vec3([1.6, 1.47, 1.29]),
+        sunDirection: new uniform.Vec3([0.2, 1.0, -0.1])
 //        time: time
     };
 
-    var fakeCamera = new scene.Camera([]);
-    var camera = new scene.Camera([]),
+    vec3.normalize(globalUniforms.sunDirection.value);
+
+    var fakeCamera = new scene.Camera([]),
         terrainNode = new scene.Material(wireFrameTerrainShader, {
                 color: new uniform.Vec3([0.5, 0.3, 0.2]),
                 heightSampler: heightmapTexture
             }, [ 
                 terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 128, 7)
+                    new terrain.QuadTree(fakeCamera, 32, 11)
                 ])
             ]
-        );
-    camera.children.push(terrainNode);
+        ),
+        globalUniformsNode = new scene.Uniforms(globalUniforms, [
+            terrainNode
+        ]),
+        camera = new scene.Camera([globalUniformsNode]);
 
     vec3.set([scale/2, 1000, scale/2], camera.position);
     vec3.set(camera.position, fakeCamera.position);
@@ -81,7 +87,7 @@ function prepareScene(){
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 1000;
+    controller.velocity = 10;
 
     var outOfBody = false;
 
@@ -126,6 +132,7 @@ setStatus('loading data...');
 loader.load([
     HEIGHTMAP,
     'shaders/transform.glsl',
+    'shaders/noise2D.glsl',
     'shaders/terrain.frag',
     'shaders/terrain.vertex'
 
@@ -135,7 +142,7 @@ loader.load([
 function ready(){
     $('#loading').hide();
     $('canvas').show();
-    glUtils.getContext(canvas, {debug: DEBUG});
+    glUtils.getContext(canvas, {debug: DEBUG, standard_derivatives: true, texture_float: true, vertex_texture_units: 2});
     prepareScene();
     glUtils.fullscreen(canvas, sceneGraph);
     clock.start();

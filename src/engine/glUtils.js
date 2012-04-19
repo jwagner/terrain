@@ -89,9 +89,10 @@ glUtils.FBO.prototype = $.extend({}, glUtils.Texture2D.prototype, {
 
 
 glUtils.getContext = function (canvas, options) {
+    var upgrade = 'Try upgrading to the latest version of firefox or chrome.';
     if(!canvas.getContext){
         glUtils.onerror(canvas, 'canvas is not supported by your browser. ' +
-             'Try upgrading to chrome 12 or firefox 6 (aurora).', 'no-canvas');
+             upgrade, 'no-canvas');
         return;
     }
     window.gl = canvas.getContext('webgl');
@@ -105,22 +106,28 @@ glUtils.getContext = function (canvas, options) {
             }
             else {
                 glUtils.onerror(canvas, 'webgl is not supported by your browser. ' +
-                     'Try upgrading to chrome 12 or firefox 7.', 'no-webgl');
+                     upgrade, 'no-webgl');
                 return;
             }
         }
     }
 
-    if(options.vertex_texture_units && gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) < 2){
+    if(options.vertex_texture_units && gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) < options.vertex_texture_units){
         glUtils.onerror(canvas, 'This demo needs at least two vertex texture units which are not supported by your browser. ' +
-              'Try upgrading to chrome 12 or firefox 6 (aurora).', 'no-vertext-texture-units');
+              upgrade, 'no-vertext-texture-units');
         return;
     }
 
     if(options.texture_float && gl.getExtension('OES_texture_float') == null){
         glUtils.onerror(canvas, 'This demo needs float textures for HDR rendering which is not supported by your browser. ' +
-              'Try upgrading to chrome 12 or firefox 6 (aurora).', 'no-OES_texture_float');
+                upgrade, 'no-OES_texture_float');
         return;
+    }
+
+    if(options.standard_derivatives && gl.getExtension('OES_standard_derivatives') == null){
+        glUtils.onerror(canvas, 'This demo need the standard deriviates extensions for WebGL which is not supported by your Browser.' +
+                upgrade, 'no-OES_standard_derivatives');
+
     }
 
     if(window.WebGLDebugUtils && options.debug){

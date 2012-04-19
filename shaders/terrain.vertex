@@ -4,37 +4,43 @@ uniform vec4 heightMapTransform;
 uniform vec3 terrainCameraPosition;
 uniform float terrainResolution;
 varying float morph;
-varying vec3 s;
-varying vec3 t;
-varying vec3 n;
+varying vec2 uv;
 
 #include "transform.glsl"
+#include "noise2D.glsl"
+#line 11
+
+float height(vec2 uv, float lod){
+    return texture2D(heightSampler, uv).r;//+snoise(uv*100.0)*0.01+snoise(uv*1000.0)*0.001;
+}
 
 
 void main(){
     vec4 worldPosition4 = modelTransform*vec4(position, 1.0);
 
     float lod = abs(distance(worldPosition4.xyz, terrainCameraPosition))/heightMapTransform.w;
-    morph = clamp((lod-0.9)*10.0, 0.0, 1.0);
+    morph = clamp((lod-0.8)*5.0, 0.0, 1.0);
     vec2 uneven = fract(position.xz*terrainResolution*0.5)*2.0;
     vec2 morphedPosition = position.xz - uneven*(1.0/terrainResolution)*morph;
     vec2 offset = uneven*morph;
-    vec2 uv = morphedPosition*heightMapTransform.z+heightMapTransform.xy;
+    uv = morphedPosition*heightMapTransform.z+heightMapTransform.xy;
 
     // calculate tangent space
     // height
+
+    /*float a = 1.0/heightMapTransform.z;*/
     float pixel = heightMapTransform.z/terrainResolution;
-    float a = 16000.0*heightMapTransform.z;
-    float left = texture2D(heightSampler, vec2(uv.x-pixel, uv.y)).r;
-    float right = texture2D(heightSampler, vec2(uv.x+pixel, uv.y)).r;
-    float top = texture2D(heightSampler, vec2(uv.x, uv.y-pixel)).r;
-    float bottom = texture2D(heightSampler, vec2(uv.x, uv.y+pixel)).r;
+    float minDelta = pixel*pixel*2.0;
+    float mip = max(0.5 * log2(minDelta), 0.0);
+    float heightSample = height(uv, mip);
+    /*float left = texture2DLod(heightSampler, vec2(uv.x-pixel, uv.y), mip).r;*/
+    /*float right = texture2DLod(heightSampler, vec2(uv.x+pixel, uv.y), mip).r;*/
+    /*float top = texture2DLod(heightSampler, vec2(uv.x, uv.y-pixel), mip).r;*/
+    /*float bottom = texture2DLod(heightSampler, vec2(uv.x, uv.y+pixel), mip).r;*/
 
-    s = vec3(1, (right-left)*a, 0);
-    t = vec3(0, (bottom-top)*a, 1);
-    n = cross(s, t);
+    /*s = normalize(vec3(1.0, (right-left)*a, 0.0));*/
+    /*t = normalize(vec3(0.0, (bottom-top)*a, -1.0));*/
+    /*n = cross(s, t);*/
 
-    vec4 heightSample = texture2D(heightSampler, uv);
-
-    transform(vec3(morphedPosition.x, heightSample.r, morphedPosition.y));
+    transform(vec3(morphedPosition.x, heightSample, morphedPosition.y));
 }
