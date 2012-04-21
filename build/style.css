@@ -1,4 +1,4 @@
-html, body, canvas {
+html, body, #c {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -8,7 +8,7 @@ html, body, canvas {
   font-size: 12px;
   font-family: Michroma, sans-serif;
 }
-canvas {
+#c {
   z-index: 1;
   position: absolute;
   display: none;
@@ -95,4 +95,11 @@ canvas {
     width: 200px;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.8);
+}
+
+#perfhub {
+    display: block;
+    position: absolute;
+    z-index: 300;
+    background-color: black;
 }

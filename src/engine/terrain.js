@@ -193,17 +193,18 @@ frustum.extract = function(mat, dest) {
   @param {number} depth - maximal depth of quadtree
 */
 
-terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth) {
+terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth, viewDistance) {
     var wireframe = false;
     this.camera = camera;
+    this.viewDistance = viewDistance || camera.far;
     this.resolution = resolution;
     this.depth = depth;
     this.topLeftWorldSpace = vec3.create([0, 0, 0]);
     this.scaleWorldSpace = vec4.create([0, 0, 0, 0]);
     this.worldScale = 1.0;
     this.worldHeight = 1.0;
+    this.lodScale = 128.0;
     this.cameraPositionUniform = new uniform.Vec3(this.camera.position);
-    this.distanceScale = 3.7;
 
     if(wireframe){
         this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
@@ -250,16 +251,16 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         if(!checkFrustumAABB(this.frustum, aabb)) {
             return;
         }
-        var distance = Math.sqrt(distancePointAABBSquared(this.camera.position, aabb));
+        var distance = Math.sqrt(distancePointAABBSquared(this.camera.position, aabb)),
+            lodDistance = scale*this.viewDistance*this.lodScale;
 
-        if(distance > scale*this.worldScale*this.distanceScale || level === this.depth){
+        if(distance > lodDistance || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
             mat4.scale(this.matrix, [scale, 1, scale], this.matrix);
-            var prevLevel = scale*2.0*this.worldScale*this.distanceScale;
             this.heightMapTransformUniform.value[0] = left;
             this.heightMapTransformUniform.value[1] = top;
             this.heightMapTransformUniform.value[2] = scale;
-            this.heightMapTransformUniform.value[3] = prevLevel;
+            this.heightMapTransformUniform.value[3] = lodDistance;
             this.mesh.visit(graph);
             mat4.scale(this.matrix, [1/scale, 1, 1/scale], this.matrix);
             mat4.translate(this.matrix, [-left, 0, -top], this.matrix);

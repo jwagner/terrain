@@ -23,6 +23,7 @@ document.write('<script src="../src/engine/shader.js" type="text/javascript"></s
 document.write('<script src="../src/engine/glUtils.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/cameracontroller.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/mesh.js" type="text/javascript"></script>');
+document.write('<script src="../src/engine/perfhub.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/uniform.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/clock.js" type="text/javascript"></script>');
 document.write('<script src="../src/engine/scene.js" type="text/javascript"></script>');

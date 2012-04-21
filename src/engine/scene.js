@@ -190,8 +190,8 @@ scene.Camera.prototype = extend({}, scene.Node.prototype, {
 
 
 
-scene.Skybox = function SkyboxNode(shader, uniforms) {
-    var mesh_ = new scene.SimpleMesh(new glUtils.VBO(mesh.cube(1.0))),
+scene.Skybox = function SkyboxNode(scale, shader, uniforms) {
+    var mesh_ = new scene.SimpleMesh(new glUtils.VBO(mesh.cube(scale))),
         material = new scene.Material(shader, uniforms, [mesh_]);
     this.children = [material];
 };
