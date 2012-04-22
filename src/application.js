@@ -101,13 +101,15 @@ function prepareScene(){
 
     clock.ontick = function(td) {
         time += td;
-        perfhub.tick('waiting');
+        if(PERF) perfhub.tick('waiting');
         //gl.disable(gl.DEPTH_TEST);
         //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         //gl.enable(gl.BLEND);
         sceneGraph.draw();
-        gl.finish();
-        perfhub.tick('drawing');
+        if(PERF){
+            gl.finish();
+            perfhub.tick('drawing');
+        }
         controller.tick(td);
 
         debug.innerHTML = (
@@ -123,13 +125,16 @@ function prepareScene(){
             fakeCamera.far = camera.far;
             fakeCamera.near = camera.near;
         }
-        if(PERF) perfhub.draw();
-        perfhub.tick('debug');
-        perfhub.start();
+        if(PERF) {
+            perfhub.draw();
+            perfhub.tick('debug');
+            perfhub.start();
+        }
     };
 
     if(!PERF) {
         $('#perfhub').hide();
+        $('#debug').hide();
     }
 
     input.onKeyUp = function(key) {

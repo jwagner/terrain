@@ -29,36 +29,58 @@ function makeProgram(vertexSource, fragmentSource){
     return program;
 }
 
+function keys(o){
+    var a = [];
+    for(var name in o){
+        a.push(name);
+    }
+    return a;
+}
+
 function Shader(vertexSource, fragmentSource) {
         this.program = makeProgram(vertexSource, fragmentSource);
         this.uniformLocations = {};
         this.uniformValues = {};
+        this.uniformNames = [];
         this.attributeLocations = {};
 }
 Shader.prototype = {
     use: function() {
         gl.useProgram(this.program);
     },
+    prepareUniforms: function(values) {
+        this.uniformNames = keys(values);
+        for(var i = 0; i < this.uniformNames.length; i++) {
+            var name = this.uniformNames[i];
+            this.uniformLocations[name] = gl.getUniformLocation(this.program, name);
+        }
+    }, 
     uniforms: function (values) {
-        for(var name in values){
-            var location = this.getUniformLocation(name),
+        if(this.uniformNames.length === 0){
+            this.prepareUniforms(values);
+        }
+        for(var i = 0; i < this.uniformNames.length; i++) {
+            var name = this.uniformNames[i];
+            
+            var location = this.uniformLocations[name],
                 value = values[name];
-            if(typeof value == 'number'){
-                if(value != this.uniformValues[name]){
-                    gl.uniform1f(location, value);
-                    this.uniformValues[name] = value;
-                }
-            }
-            else {
+            if(value.uniform){
                 if(!value.equals(this.uniformValues[name])){
                     value.uniform(location);
                     value.set(this.uniformValues, name);
                 }
             }
+            else {
+                if(value != this.uniformValues[name]){
+                    gl.uniform1f(location, value);
+                    this.uniformValues[name] = value;
+                }
+
+            }
         }
     },
     getUniformLocation: function(name) {
-        if(!(name in this.uniformLocations)){
+        if(this.uniformLocations[name] === undefined){
             this.uniformLocations[name] = gl.getUniformLocation(this.program, name);
         }
         return this.uniformLocations[name];
