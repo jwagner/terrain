@@ -28,7 +28,13 @@ glUtils.Texture2D.prototype = {
     },
     uniform: function (location) {
         gl.uniform1i(location, this.unit);
-    }
+    },
+    equals: function(value) {
+        return this.unit === value;
+    },
+    set: function(obj, name) {
+        obj[name] = this.unit;
+    } 
 };
 
 glUtils.VBO = function VBO(data){

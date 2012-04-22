@@ -3,10 +3,35 @@ var uniform = provides('engine.uniform');
 
 function glValue(set){
     function GlValue(value){
-        this.value = value;
+        if(value instanceof Float32Array){
+            this.value = value;
+        }
+        else {
+            this.value = new Float32Array(value);
+        }
     }
     GlValue.prototype = {
-        uniform: set
+        uniform: set,
+        equals: function(value) {
+            if(!value) return false;
+            var v = this.value;
+            for(var i = 0, l=v.length; i < l; i++) {
+                if(value[i] !== v[i]) return false;
+            }
+            return true;
+        },
+        set: function(obj, name){
+            var v = obj[name],
+                v2 = this.value;
+            if(!v){
+                obj[name] = new Float32Array(v2);
+            }
+            else {
+                for(var i = 0, l=v.length; i < l; i++) {
+                    v[i] = v2[i];
+                }
+            }
+        }
     };
     return GlValue;
 }
@@ -23,12 +48,19 @@ uniform.Vec3 = glValue(function (location) {
 uniform.Vec4 = glValue(function (location) {
     gl.uniform4fv(location, this.value);
 });
-uniform.Int = glValue(function (location) {
-    gl.uniformi(location, this.value);
-});
-uniform.Float = glValue(function (location) {
-    gl.uniform1f(location, this.value);
-});
-
+uniform.Int = function(value){
+    this.value = value;
+};
+uniform.Int.prototype = {
+    uniform: function (location) {
+        gl.uniformi(location, this.value);
+    },
+    equals: function(value){
+        return this.value === value;
+    },
+    set: function(obj, name){
+        obj[name] = this.value;
+    }
+};
 
 })();

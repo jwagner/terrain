@@ -32,6 +32,7 @@ function makeProgram(vertexSource, fragmentSource){
 function Shader(vertexSource, fragmentSource) {
         this.program = makeProgram(vertexSource, fragmentSource);
         this.uniformLocations = {};
+        this.uniformValues = {};
         this.attributeLocations = {};
 }
 Shader.prototype = {
@@ -43,10 +44,16 @@ Shader.prototype = {
             var location = this.getUniformLocation(name),
                 value = values[name];
             if(typeof value == 'number'){
-                gl.uniform1f(location, value);
+                if(value != this.uniformValues[name]){
+                    gl.uniform1f(location, value);
+                    this.uniformValues[name] = value;
+                }
             }
             else {
-                value.uniform(location);
+                if(!value.equals(this.uniformValues[name])){
+                    value.uniform(location);
+                    value.set(this.uniformValues, name);
+                }
             }
         }
     },

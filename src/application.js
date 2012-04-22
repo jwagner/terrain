@@ -78,7 +78,7 @@ function prepareScene(){
         ]),
         camera = new scene.Camera([globalUniformsNode]);
 
-    vec3.set([scale/2, vscale/2, scale/2], camera.position);
+    vec3.set([scale/2, vscale/3, scale/2], camera.position);
     vec3.set(camera.position, fakeCamera.position);
 
     fakeCamera.yaw = camera.yaw = 0.0;
@@ -95,7 +95,7 @@ function prepareScene(){
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 50;
+    controller.velocity = 500;
 
     var outOfBody = false;
 
@@ -106,6 +106,7 @@ function prepareScene(){
         //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         //gl.enable(gl.BLEND);
         sceneGraph.draw();
+        gl.finish();
         perfhub.tick('drawing');
         controller.tick(td);
 

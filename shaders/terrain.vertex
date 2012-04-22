@@ -11,7 +11,24 @@ varying vec2 uv;
 #include "noise2D.glsl"
 #line 11
 
+float noize(vec2 uv){
+    vec3 n = vec3(0.0);
+    float f = 0.5;
+    float w = 0.25;
+    vec2 d = vec2(0.0);
+    for( int i=0; i < 8 ; i++ )
+    {
+        float z = snoise(uv, n);
+        d += n.xz;
+        f += w * z / (1.0 + dot(d, d)); // replace with "w * n[0]" for a classic fbm()
+        w *= 0.5;
+        uv *= 2.0;
+    }
+    return f;
+}
+
 float height(vec2 uv, float mip){
+    //return noize(uv*10.0);//
     return texture2DLod(heightSampler, uv, mip).r;//+snoise(uv*100.0)*0.01+snoise(uv*1000.0)*0.001;
 }
 

@@ -1,6 +1,5 @@
 #extension GL_OES_standard_derivatives : enable
 precision highp float;
-//include "noise2D.glsl"
 
 
 varying float depth;
@@ -18,11 +17,29 @@ varying vec3 worldPosition;
 uniform vec3 terrainCameraPosition;
 
 #include "atmosphere.glsl"
+#include "noise2D.glsl"
+
+float noize(vec2 uv){
+    vec3 n = vec3(0.0);
+    float f = 0.5;
+    float w = 0.25;
+    vec2 d = vec2(0.0);
+    for( int i=0; i < 16 ; i++ )
+    {
+        float z = snoise(uv, n);
+        d += n.xz;
+        f += w * z / (1.0 + dot(d, d)); // replace with "w * n[0]" for a classic fbm()
+        w *= 0.5;
+        uv *= 2.0;
+    }
+    return f;
+}
 
 float height(vec2 uv){
-//    return texture2D(heightSampler, uv, 3.0).r;//+snoise(uv*1000.0)*0.001+snoise(uv*10000.0)*0.001;
-    vec2 d = vec2(0.004);
-    return (texture2D(heightSampler, uv, 3.0).r+texture2D(heightSampler, uv+d).r+texture2D(heightSampler, uv-d)+texture2D(heightSampler, uv+d.yx)+texture2D(heightSampler, uv-d.yx)).r*(1.0/6.0);
+    /*return noize(uv*10.0);//*/
+    return texture2D(heightSampler, uv, 3.0).r;
+//    vec2 d = vec2(0.004);
+//    return (texture2D(heightSampler, uv, 3.0).r+texture2D(heightSampler, uv+d).r+texture2D(heightSampler, uv-d)+texture2D(heightSampler, uv+d.yx)+texture2D(heightSampler, uv-d.yx)).r*(1.0/6.0);
 }
 
 void main(){
@@ -59,6 +76,8 @@ void main(){
 
 //    gl_FragColor = vec4(vec3(dot(rayDirection))*0.5+0.5, 1.0);
     gl_FragColor = vec4(albedo, 1.0);
+//    gl_FragColor = vec4(vec3(noize(uv*10.0)), 1.0);
+//    gl_FragColor = vec4(vec3(top), 1.0);
     /*gl_FragColor = vec4(0.0, 1.0, 0.0, 0.0)*lod;*/
     /*gl_FragColor += vec4(1.0, 0.0, 0.0, 0.0)*morph;*/
     /*//gl_FragColor = vec4(vec3(morph)+vec3(1.0, 0.0, 0.0), 1.0);*/
