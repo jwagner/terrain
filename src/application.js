@@ -15,7 +15,7 @@ function getHashValue(name, default_){
 var DEBUG = getHashValue('debug', false),
     PERF = getHashValue('perf', false),
     FAR_AWAY = 10000,
-    HEIGHTMAP = 'gfx/height4k_blur.png',
+    HEIGHTMAP = 'gfx/height4k_diff.png',
     PerfHub = requires('engine.perfhub').PerfHub,
     perfhub = new PerfHub(),
     scene = requires('engine.scene'),
@@ -49,32 +49,31 @@ function prepareScene(){
         skyShader = shaderManager.get('sky'),
         scale = 163840/2,
         far_away = scale*2,
-        vscale = 6500,
-        terrainTransform;
+        vscale = 6500;
 
     globalUniforms = {
-        sunColor: new uniform.Vec3([1.6, 1.47, 1.29]),
-        sunDirection: new uniform.Vec3([0.5, 0.1, -0.1]),
-        horizonColor: new uniform.Vec3([0.6, 0.7, 0.9]),
-        zenithColor: new uniform.Vec3([0.025, 0.1, 0.5])
+        sunColor: [1.6, 1.47, 1.29],
+        sunDirection: [0.5, 0.1, -0.1],
+        horizonColor: [0.6, 0.7, 0.9],
+        zenithColor: [0.025, 0.1, 0.5]
 //        time: time
     };
 
-    vec3.normalize(globalUniforms.sunDirection.value);
+    vec3.normalize(globalUniforms.sunDirection);
 
     var fakeCamera = new scene.Camera([]),
-        terrainNode = new scene.Material(terrainShader, {
-                color: new uniform.Vec3([0.5, 0.3, 0.2]),
-                heightSampler: heightmapTexture
-            }, [ 
-                terrainTransform = new scene.Transform([
-                    new terrain.QuadTree(fakeCamera, 64, 5)
-                ])
-            ]
-        ),
+        terrainTransform = new scene.Transform([
+            new scene.Material(terrainShader, {
+                    color: new uniform.Vec3([0.5, 0.3, 0.2]),
+                    heightSampler: heightmapTexture
+                }, [
+                    new terrain.QuadTree(fakeCamera, 128, 10)
+                ]
+            )
+        ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
         globalUniformsNode = new scene.Uniforms(globalUniforms, [
-            terrainNode, skyBox
+            terrainTransform, skyBox
         ]),
         camera = new scene.Camera([globalUniformsNode]);
 

@@ -37,7 +37,7 @@ float noize(vec2 uv){
 
 float height(vec2 uv){
     /*return noize(uv*10.0);//*/
-    return texture2D(heightSampler, uv, 3.0).r;
+    return texture2D(heightSampler, uv, 0.0).r;
 //    vec2 d = vec2(0.004);
 //    return (texture2D(heightSampler, uv, 3.0).r+texture2D(heightSampler, uv+d).r+texture2D(heightSampler, uv-d)+texture2D(heightSampler, uv+d.yx)+texture2D(heightSampler, uv-d.yx)).r*(1.0/6.0);
 }
@@ -55,10 +55,12 @@ void main(){
 //    uvWidth = fwidth(uv)*2.0;
     vec2 dx = vec2(uvWidth.x, 0.0);
     vec2 dy = vec2(0.0, uvWidth.y);
-    float left = height(uv);
-    float right = height(uv+dx);
-    float top = left;
-    float bottom = height(uv+dx);
+    vec4 c = texture2D(heightSampler, uv, 3.0);
+    float top = c.a;
+    float left = c.a;
+    float right = (c.r-0.5)*-2.0;
+    float bottom = (c.g-0.5)*2.0;
+//    vec2 d = vec2(0.004);
     vec3 s = (vec3(uvWidth.x, (right-left)*heightRatio, 0.0));
     vec3 t = (vec3(0.0, (bottom-top)*heightRatio, -uvWidth.y));
     vec3 n = normalize(cross(s, t));

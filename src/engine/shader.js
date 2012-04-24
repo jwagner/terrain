@@ -70,6 +70,44 @@ Shader.prototype = {
                     value.set(this.uniformValues, name);
                 }
             }
+            else if(value.length){
+                var value2 = this.uniformValues[name];
+                if(value2 !== undefined){
+                    for(var j = 0, l = value.length; j < l; j++) {
+                        if(value[j] != value2[j]) break;
+                    }
+                    // already set
+                    if(j == l) {
+                        continue;
+                    }
+                    else {
+                        for(j = 0, l = value.length; j < l; j++) {
+                            value2[j] = value[j];
+                        }
+                    }
+                }
+                else {
+                    this.uniformValues[name] = new Float32Array(value);
+                }
+                switch(value.length){
+                    case 2:
+                        gl.uniform2fv(location, value);
+                        break;
+                    case 3:
+                        gl.uniform3fv(location, value);
+                        break;
+                    case 4:
+                        gl.uniform4fv(location, value);
+                        break;
+                    case 9:
+                        gl.uniformMatrix3fv(location, value);
+                        break;
+                    case 16:
+                        gl.uniformMatrix4fv(location, value);
+                        break;
+
+                }
+            }
             else {
                 if(value != this.uniformValues[name]){
                     gl.uniform1f(location, value);

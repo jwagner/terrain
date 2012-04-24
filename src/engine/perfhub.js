@@ -13,7 +13,6 @@ perfhub.PerfHub = function(id) {
     }
     this.ctx = this.canvas.getContext('2d');
     this.buckets = {};
-    this.buckets.keys = [];
     this.buckets.values = [];
     this.sample = 0;
     this.t = new Date();
@@ -38,7 +37,6 @@ perfhub.PerfHub.prototype = {
                 average: 0,
                 samples: new Float32Array(this.bucketSize)
             };
-            this.buckets.keys.push(name);
             this.buckets.values.push(bucket);
         }
         var t = new Date(),
@@ -55,7 +53,7 @@ perfhub.PerfHub.prototype = {
         }
         var total = 0,
             textSpacing = 14,
-            textHeight = 2*textSpacing+this.fontHeight*(this.buckets.keys.length+2),
+            textHeight = 2*textSpacing+this.fontHeight*(this.buckets.values.length+2),
             availableHeight = this.canvas.height-textHeight,
             bucket;
 
@@ -76,13 +74,14 @@ perfhub.PerfHub.prototype = {
         this.ctx.fillStyle = '#111';
         this.ctx.fillRect(0, 0, this.canvas.width, textHeight);
         this.ctx.drawImage(this.canvas, -1, 0);
-        for(i = 0; i < this.buckets.keys.length; i++) {
-            var name = this.buckets.keys[i];
-            
-            var color = this.colors[(i)%this.colors.length];
-            bucket = this.buckets[name];
-            var sample = bucket.samples[this.sample],
+        for(i = 0; i < this.buckets.values.length; i++) {
+            bucket = this.buckets.values[i];
+
+            var name = bucket.name,
+                color = this.colors[(i)%this.colors.length],
+                sample = bucket.samples[this.sample],
                 height = sample*this.scale;
+
             y -= height;
             this.ctx.fillStyle = color;
             this.ctx.fillRect(x, y, this.sampleWidth, height);
@@ -90,7 +89,7 @@ perfhub.PerfHub.prototype = {
             total += bucket.average;
         }
         this.ctx.fillStyle = 'white';
-        this.ctx.fillText("total: " + ~~(total*100)/100 + " ms / " + ~~(1000/total) + " fps", textSpacing, textSpacing+this.fontHeight*(this.buckets.keys.length+1));
+        this.ctx.fillText("total: " + ~~(total*100)/100 + " ms / " + ~~(1000/total) + " fps", textSpacing, textSpacing+this.fontHeight*(this.buckets.values.length+1));
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(x, 0, this.sampleWidth, y);
         return;

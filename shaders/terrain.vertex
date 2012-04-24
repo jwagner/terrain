@@ -29,7 +29,7 @@ float noize(vec2 uv){
 
 float height(vec2 uv, float mip){
     //return noize(uv*10.0);//
-    return texture2DLod(heightSampler, uv, mip).r;//+snoise(uv*100.0)*0.01+snoise(uv*1000.0)*0.001;
+    return texture2DLod(heightSampler, uv, mip).a;//+snoise(uv*100.0)*0.01+snoise(uv*1000.0)*0.001;
 }
 
 
@@ -49,7 +49,7 @@ void main(){
     /*float a = 1.0/heightMapTransform.z;*/
     float pixel = heightMapTransform.z/terrainResolution;
     float minDelta = pixel*pixel*2.0;
-    float bias = 2.0;
+    float bias = 4.0;
     float mip = max(0.5 * log2(minDelta), 0.0)+bias;
     float heightSample = height(uv, mip);
     /*float left = texture2DLod(heightSampler, vec2(uv.x-pixel, uv.y), mip).r;*/
