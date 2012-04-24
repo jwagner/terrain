@@ -1,4 +1,5 @@
 data
+build/main.js
 gfx
 *.pyc
 *.swp
