@@ -2,7 +2,6 @@
 var terrain = provides('engine.terrain'),
     scene = requires('engine.scene'),
     glUtils = requires('engine.glUtils'),
-    uniform = requires('engine.uniform'),
     mesh = requires('engine.mesh');
 
 
@@ -204,7 +203,6 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth, viewDista
     this.worldScale = 1.0;
     this.worldHeight = 1.0;
     this.lodScale = 128.0;
-    this.cameraPositionUniform = new uniform.Vec3(this.camera.position);
 
     if(wireframe){
         this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
@@ -213,15 +211,14 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth, viewDista
         this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.grid(resolution)), gl.TRIANGLES);
     }
     this.matrix = mat4.identity();
-    this.matrixUniform = new uniform.Mat4(this.matrix);
-    this.heightMapTransformUniform = new uniform.Vec4(vec4.create([0, 0, 1, 1]));
     this.inverseModelTransform = mat4.create();
+    this.heightMapTransform = vec4.create();
     this.frustum = frustum.create();
 };
 terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
     visit: function(graph) {
         graph.pushUniforms();
-        var modelTransform = graph.uniforms.modelTransform.value;
+        var modelTransform = graph.uniforms.modelTransform;
         mat4.multiplyVec3(modelTransform, [0, 0, 0], this.topLeftWorldSpace);
         mat4.multiplyVec4(modelTransform, [1, 1, 1, 0], this.scaleWorldSpace);
         // optimize me
@@ -234,9 +231,9 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
 
         mat4.set(modelTransform, this.matrix);
 
-        graph.uniforms.modelTransform = this.matrixUniform;
-        graph.uniforms.heightMapTransform = this.heightMapTransformUniform;
-        graph.uniforms.terrainCameraPosition = this.cameraPositionUniform;
+        graph.uniforms.modelTransform = this.matrix;
+        graph.uniforms.heightMapTransform = this.heightMapTransform;
+        graph.uniforms.terrainCameraPosition = this.camera.position;
         graph.uniforms.terrainResolution = this.resolution;
         this.visitNode(graph, 0, 0, 1, 0);
         graph.popUniforms();
@@ -256,10 +253,10 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         if(distance > lodDistance || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
             mat4.scale(this.matrix, [scale, 1, scale], this.matrix);
-            this.heightMapTransformUniform.value[0] = left;
-            this.heightMapTransformUniform.value[1] = top;
-            this.heightMapTransformUniform.value[2] = scale;
-            this.heightMapTransformUniform.value[3] = lodDistance;
+            this.heightMapTransform[0] = left;
+            this.heightMapTransform[1] = top;
+            this.heightMapTransform[2] = scale;
+            this.heightMapTransform[3] = lodDistance;
             this.mesh.visit(graph);
             mat4.scale(this.matrix, [1/scale, 1, 1/scale], this.matrix);
             mat4.translate(this.matrix, [-left, 0, -top], this.matrix);

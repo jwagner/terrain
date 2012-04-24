@@ -24,7 +24,6 @@ var DEBUG = getHashValue('debug', false),
     Loader = requires('engine.loader').Loader,
     ShaderManager = requires('engine.shader').Manager,
     glUtils = requires('engine.glUtils'),
-    uniform = requires('engine.uniform'),
     Clock = requires('engine.clock').Clock,
     MouseController = requires('engine.cameracontroller').MouseController,
     InputHandler = requires('engine.input').Handler,
@@ -64,10 +63,10 @@ function prepareScene(){
     var fakeCamera = new scene.Camera([]),
         terrainTransform = new scene.Transform([
             new scene.Material(terrainShader, {
-                    color: new uniform.Vec3([0.5, 0.3, 0.2]),
+                    color: [0.5, 0.3, 0.2],
                     heightSampler: heightmapTexture
                 }, [
-                    new terrain.QuadTree(fakeCamera, 128, 10)
+                    new terrain.QuadTree(fakeCamera, 128, 5)
                 ]
             )
         ]),

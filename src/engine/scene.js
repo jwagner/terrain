@@ -1,8 +1,7 @@
 (function(){
 var scene = provides('engine.scene'),
     mesh = requires('engine.mesh'),
-    glUtils = requires('engine.glUtils'),
-    uniform = requires('engine.uniform');
+    glUtils = requires('engine.glUtils');
 
 scene.Node = function SceneNode(children){
     this.children = children || [];
@@ -154,10 +153,10 @@ scene.Camera.prototype = extend({}, scene.Node.prototype, {
 
         graph.pushUniforms();
         mat4.multiply(projection, worldView, wvp);
-        graph.uniforms.worldViewProjection = new uniform.Mat4(wvp);
-        graph.uniforms.worldView = new uniform.Mat4(worldView);
-        graph.uniforms.projection = new uniform.Mat4(projection);
-        graph.uniforms.eye = new uniform.Vec3(this.position);
+        graph.uniforms.worldViewProjection = wvp;
+        graph.uniforms.worldView = worldView;
+        graph.uniforms.projection = projection;
+        graph.uniforms.eye = this.position;
         //this.project([0, 0, 0, 1], scene);
     },
     project: function(point, graph) {
@@ -199,10 +198,10 @@ scene.Skybox.prototype = extend({}, scene.Node.prototype, {
     enter: function(graph){
         graph.pushUniforms();
         var worldViewProjection = mat4.create(),
-            worldView = mat3.toMat4(mat4.toMat3(graph.uniforms.worldView.value));
+            worldView = mat3.toMat4(mat4.toMat3(graph.uniforms.worldView));
         //mat4.identity(worldView);
-        mat4.multiply(graph.uniforms.projection.value, worldView, worldViewProjection);
-        graph.uniforms.worldViewProjection = new uniform.Mat4(worldViewProjection);
+        mat4.multiply(graph.uniforms.projection, worldView, worldViewProjection);
+        graph.uniforms.worldViewProjection = worldViewProjection;
     },
     exit: function(graph){
         graph.popUniforms();
@@ -226,11 +225,11 @@ scene.Transform.prototype = extend({}, scene.Node, {
     enter: function(graph) {
         graph.pushUniforms();
         if(graph.uniforms.modelTransform){
-            mat4.multiply(graph.uniforms.modelTransform.value, this.matrix, this.aux);
-            graph.uniforms.modelTransform = new uniform.Mat4(this.aux);
+            mat4.multiply(graph.uniforms.modelTransform, this.matrix, this.aux);
+            graph.uniforms.modelTransform = this.aux;
         }
         else{
-            graph.uniforms.modelTransform = new uniform.Mat4(this.matrix);
+            graph.uniforms.modelTransform = this.matrix;
         }
     },
     exit: function(graph) {

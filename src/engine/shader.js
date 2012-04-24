@@ -100,10 +100,10 @@ Shader.prototype = {
                         gl.uniform4fv(location, value);
                         break;
                     case 9:
-                        gl.uniformMatrix3fv(location, value);
+                        gl.uniformMatrix3fv(location, false, value);
                         break;
                     case 16:
-                        gl.uniformMatrix4fv(location, value);
+                        gl.uniformMatrix4fv(location, false, value);
                         break;
 
                 }
