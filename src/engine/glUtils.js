@@ -156,10 +156,10 @@ glUtils.getContext = function (canvas, options) {
     return window.gl;
 };
 
-glUtils.fullscreen = function (canvas, scene) {
+glUtils.fullscreen = function (canvas, scene, parent) {
     function onresize() {
-        var height = $(canvas).height(),
-            width = $(canvas).width();
+        var height = $(parent || canvas).height(),
+            width = $(parent || canvas).width();
         if(canvas.width != width){
             canvas.width = scene.viewportWidth = width;
         }

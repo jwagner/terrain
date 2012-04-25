@@ -205,19 +205,33 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth, viewDista
     this.lodScale = 128.0;
 
     if(wireframe){
-        this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution))), gl.LINES);
+        this.vbo = new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution)));
     }
     else {
-        this.mesh = new scene.SimpleMesh(new glUtils.VBO(mesh.grid(resolution)), gl.TRIANGLES);
+        this.vbo = new glUtils.VBO(mesh.grid(resolution));
     }
     this.matrix = mat4.identity();
     this.inverseModelTransform = mat4.create();
     this.heightMapTransform = vec4.create();
     this.frustum = frustum.create();
+    this.shader = null;
 };
 terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
     visit: function(graph) {
         graph.pushUniforms();
+        //gl state
+        var shader = graph.getShader(),
+            location = shader.getAttribLocation('position'),
+            stride = 0,
+            offset = 0,
+            normalized = false;
+
+        this.shader = shader;
+
+        this.vbo.bind();
+        gl.enableVertexAttribArray(location);
+        gl.vertexAttribPointer(location, 3, gl.FLOAT, normalized, stride, offset);
+
         var modelTransform = graph.uniforms.modelTransform;
         mat4.multiplyVec3(modelTransform, [0, 0, 0], this.topLeftWorldSpace);
         mat4.multiplyVec4(modelTransform, [1, 1, 1, 0], this.scaleWorldSpace);
@@ -235,7 +249,10 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         graph.uniforms.heightMapTransform = this.heightMapTransform;
         graph.uniforms.terrainCameraPosition = this.camera.position;
         graph.uniforms.terrainResolution = this.resolution;
+
+        shader.uniforms(graph.uniforms);
         this.visitNode(graph, 0, 0, 1, 0);
+        this.vbo.unbind();
         graph.popUniforms();
     },
     visitNode: function(graph, left, top, scale, level) {
@@ -257,7 +274,11 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
             this.heightMapTransform[1] = top;
             this.heightMapTransform[2] = scale;
             this.heightMapTransform[3] = lodDistance;
-            this.mesh.visit(graph);
+            gl.uniform4fv(this.shader.uniformLocations.heightMapTransform, this.heightMapTransform);
+            gl.uniformMatrix4fv(this.shader.uniformLocations.modelTransform, false, this.matrix);
+            this.vbo.draw(gl.TRIANGLES);
+            graph.statistics.drawCalls ++;
+            graph.statistics.vertices += this.vbo.length/3;
             mat4.scale(this.matrix, [1/scale, 1, 1/scale], this.matrix);
             mat4.translate(this.matrix, [-left, 0, -top], this.matrix);
         }
@@ -269,7 +290,7 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
             this.visitNode(graph, left, top+scale, scale, level);
             this.visitNode(graph, left+scale, top+scale, scale, level);
         }
-    } 
+    }
 });
 
 })();

@@ -7,7 +7,7 @@ clock.Clock = function () {
     this.running = false;
     this.interval = null;
     this.t0 = new Date();
-}
+};
 clock.Clock.prototype = {
     tick: function () {
         var t1 = new Date(),

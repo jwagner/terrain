@@ -66,7 +66,7 @@ function prepareScene(){
                     color: [0.5, 0.3, 0.2],
                     heightSampler: heightmapTexture
                 }, [
-                    new terrain.QuadTree(fakeCamera, 128, 5)
+                    new terrain.QuadTree(fakeCamera, 64, 7)
                 ]
             )
         ]),
@@ -99,14 +99,14 @@ function prepareScene(){
 
     clock.ontick = function(td) {
         time += td;
-        if(PERF) perfhub.tick('waiting');
         //gl.disable(gl.DEPTH_TEST);
         //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         //gl.enable(gl.BLEND);
+        if(PERF) perfhub.enter('draw');
         sceneGraph.draw();
         if(PERF){
-            gl.finish();
-            perfhub.tick('drawing');
+            //gl.finish();
+            perfhub.exit('draw');
         }
         controller.tick(td);
 
@@ -124,9 +124,7 @@ function prepareScene(){
             fakeCamera.near = camera.near;
         }
         if(PERF) {
-            perfhub.draw();
-            perfhub.tick('debug');
-            perfhub.start();
+            perfhub.drawFrame();
         }
     };
 
@@ -170,8 +168,8 @@ function ready(){
     $('canvas').show();
     glUtils.getContext(canvas, {debug: DEBUG, standard_derivatives: true, texture_float: true, vertex_texture_units: 2});
     prepareScene();
-    glUtils.fullscreen(canvas, sceneGraph);
-    clock.start();
+    glUtils.fullscreen(canvas, sceneGraph, document.body);
+    clock.start(canvas);
 }
 
 function numberFormat(n){
