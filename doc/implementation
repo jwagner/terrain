@@ -1,0 +1,35 @@
+============
+Data Formats
+============
+
+Textures
+========
+
+Depth
+-----
+
+half_float alpha
+a: height (y)
+
+Derivative
+----------
+byte rgba
+r: dx
+g: dy
+b: ?
+a: ?
+
+
+Ambient Aperture
+----------------
+
+byte rgba
+r: nx
+g: nz
+b: ny
+a: radius
+
+
+Meta
+====
+Float16 Height Mip?

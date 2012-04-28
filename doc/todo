@@ -1,0 +1,39 @@
+16 bit heightmap
+UNPACK_COLORSPACE_CONVERSION_WEBGL =none
+s/gl.finish/flush/
+check depth range etc.
+
+Smooth gradients for normal calculation
+
+Single texture
+
+Normal mapping
+Texture Splatting
+
+Reduce overdraw by changing draw order according to camera position
+	according to a simple dot with direction to center?
+Reduce draws by doing 1 draw call for 4 children at same level?
+persistent nodes? maybe up to a max depth...
+  requires 16k nodes for a 16k map at 128:/
+Do a Z prepass?
+Do parallax occlusion
+Find a way to combine parallax occlusion + splatting
+
+shadows/ambient aperture lighting
+A lone tree
+Shadows/Ambient aperture
+
+Grass
+Water
+
+Collision detection
+
+
+Streaming
+Graceful degradation
+Turn it into a proper game
+
+Experiment with more procedural effects
+
+Performance later:
+  reduce garbage
