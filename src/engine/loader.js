@@ -7,7 +7,7 @@ loader.Loader = function Loader(root){
     this.total = 0;
     this.failed = 0;
     this.resources = {};
-}
+};
 loader.Loader.prototype = {
     load: function(resources) {
         for(var i = 0; i < resources.length; i++) {
@@ -27,7 +27,7 @@ loader.Loader.prototype = {
             else if(/\.json$/.test(resource)){
                 this._loadJSON(resource);
             }
-            else if(/\.bin/.test(resource)){
+            else if(/\.(bin|raw)/.test(resource)){
                 this._loadBin(resource);
             }
             else {
@@ -53,10 +53,10 @@ loader.Loader.prototype = {
         var img = document.createElement('img');
         img.onload = function() {
             self._success(src, img);
-        }
+        };
         img.onerror = function (e) {
             self._error(src, e);
-        }
+        };
         img.src = this.root + src;
     },
     _loadJSON: function(src){
@@ -76,7 +76,7 @@ loader.Loader.prototype = {
     },
     _loadData: function(src){
         var self = this;
-        $.get(this.root + src)
+        $.ajax({url: this.root + src, dataType: 'text'})
             .success(function(data) { self._success(src, data); })
             .error(function(error) { self._error(src, error); });
     },
