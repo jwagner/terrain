@@ -61,8 +61,8 @@ void main(){
     float right = (c.r-0.5)*-2.0;
     float bottom = (c.g-0.5)*2.0;
 //    vec2 d = vec2(0.004);
-    vec3 s = (vec3(uvWidth.x, (right-left)*heightRatio, 0.0));
-    vec3 t = (vec3(0.0, (bottom-top)*heightRatio, -uvWidth.y));
+    vec3 s = (vec3(uvWidth.x, (right)*heightRatio, 0.0));
+    vec3 t = (vec3(0.0, (bottom)*heightRatio, -uvWidth.y));
     vec3 n = normalize(cross(s, t));
     vec3 diffuse = max(dot(sunDirection, n), 0.0)*sunColor;
     /*gl_FragColor = vec4(color*dot(uvWidth, uvWidth)*100000.0, 1.0);*/

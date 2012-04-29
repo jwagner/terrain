@@ -1,9 +1,10 @@
-16 bit heightmap
+#16 bit heightmap on ice
 UNPACK_COLORSPACE_CONVERSION_WEBGL =none
-s/gl.finish/flush/
 check depth range etc.
 
-Smooth gradients for normal calculation
+x Smooth gradients for normal calculation
+
+Change DEM to hawaii
 
 Single texture
 
