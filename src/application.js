@@ -48,7 +48,7 @@ function prepareScene(){
         terrainShader = shaderManager.get('terrain'),
         skyShader = shaderManager.get('sky'),
         scale = 163840/2,
-        far_away = scale*2,
+        far_away = scale*2.0,
         vscale = 6500;
 
     globalUniforms = {
@@ -67,7 +67,7 @@ function prepareScene(){
                     color: [0.5, 0.3, 0.2],
                     heightSampler: heightmapTexture
                 }, [
-                    new terrain.QuadTree(fakeCamera, 64*Q, 7)
+                    new terrain.QuadTree(fakeCamera, 64*Q, 6, far_away)
                 ]
             )
         ]),
@@ -94,7 +94,7 @@ function prepareScene(){
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 500;
+    controller.velocity = 5000;
 
     var outOfBody = false;
 

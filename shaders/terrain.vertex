@@ -49,7 +49,7 @@ void main(){
     /*float a = 1.0/heightMapTransform.z;*/
     float pixel = heightMapTransform.z/terrainResolution;
     float minDelta = pixel*pixel*2.0;
-    float bias = 4.0;
+    float bias = 0.0;
     float mip = max(0.5 * log2(minDelta), 0.0)+bias;
     float heightSample = height(uv, mip);
     /*float left = texture2DLod(heightSampler, vec2(uv.x-pixel, uv.y), mip).r;*/
