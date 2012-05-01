@@ -1,6 +1,5 @@
 #16 bit heightmap on ice
 UNPACK_COLORSPACE_CONVERSION_WEBGL =none
-check depth range etc.
 
 x Smooth gradients for normal calculation
 
