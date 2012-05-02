@@ -101,7 +101,7 @@ glUtils.getContext = function (canvas, options) {
              upgrade, 'no-canvas');
         return;
     }
-    window.gl = canvas.getContext('webgl');
+    window.gl = canvas.getContext('webgl', {depth: true, alpha: false});
     if(window.gl == null){
         window.gl = canvas.getContext('experimental-webgl');
         if(window.gl == null){
