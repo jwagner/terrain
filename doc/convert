@@ -1,0 +1,10 @@
+convert ps_height_16k_16b.png -crop 8192x8192+8192+8192 -resize 4096x4096 height_4k_16b.png
+stream -storage-type long -map i height_4k_16b.png height_4k_long.raw
+a = numpy.fromfile("height_4k_long.raw", dtype=numpy.long)
+b = numpy.array(a, dtype=numpy.half)
+In [2]: a = numpy.fromfile("height_4k_16b.raw", dtype=numpy.ushort)
+In [8]: b = numpy.array(a, dtype=numpy.float32)
+b = b/(2**16-1)
+In [13]: b.tofile("height_4k_float.raw")
+
+gdal_translate -scale 1 3000 -of png w001001.adf w.png
