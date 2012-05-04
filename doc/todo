@@ -1,14 +1,30 @@
+Add dat.gui for global uniforms!
+Update dat.gui for neonflames -> color picker!
+
+max elevation = 3055
+
 #16 bit heightmap on ice
 UNPACK_COLORSPACE_CONVERSION_WEBGL =none
 
+clear|deactivate stencil buffer
+
 x Smooth gradients for normal calculation
 
-Change DEM to hawaii
+color grass by dot of surface to eye normal
+
 
 Single texture
 
 Normal mapping
 Texture Splatting
+
+use https://github.com/toji/game-shim/blob/master/game-shim.js
+- fullscreen
+- mouselock
+- high res timing
+-> add high res timing to perfhub!
+
+get camera to create textures
 
 Reduce overdraw by changing draw order according to camera position
 	according to a simple dot with direction to center?
