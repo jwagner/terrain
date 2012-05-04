@@ -8,5 +8,5 @@ vec3 atmosphereColor(vec3 rayDirection){
     float density = 0.00005;
     return mix( skyColor, //vec3(0.2,0.5,0.66), 
          sunColor*0.8, 
-         pow(sunTheta, 64.0));
+         pow(sunTheta, 128.0));
 }

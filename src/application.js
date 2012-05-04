@@ -16,7 +16,7 @@ var DEBUG = getHashValue('debug', false),
     PERF = getHashValue('perf', false),
     Q = getHashValue('Q', '1.0')*1.0,
     FAR_AWAY = 10000,
-    HEIGHTMAP = 'gfx/height4k_diff.png',
+    HEIGHTMAP = 'gfx/maui-diff.png',
     PerfHub = requires('engine.perfhub').PerfHub,
     perfhub = new PerfHub(),
     scene = requires('engine.scene'),
@@ -53,7 +53,7 @@ function prepareScene(){
 
     globalUniforms = {
         sunColor: [1.6, 1.47, 1.29],
-        sunDirection: [-1.0, 1.0, 0.0],
+        sunDirection: [-1.0, 0.1, 0.0],
         horizonColor: [0.6, 0.7, 0.9],
         zenithColor: [0.025, 0.1, 0.5]
 //        time: time
