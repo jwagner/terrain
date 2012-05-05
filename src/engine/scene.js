@@ -242,11 +242,11 @@ scene.Mirror = function MirrorNode(children){
 };
 scene.Mirror.prototype = extend({}, scene.Transform.prototype, {
     enter: function (graph) {
-        gl.cullFace(gl.FRONT);
+        //gl.cullFace(gl.FRONT);
         scene.Transform.prototype.enter.call(this, graph);
     },
     exit: function (graph) {
-        gl.cullFace(gl.BACK);
+        //gl.cullFace(gl.BACK);
         scene.Transform.prototype.exit.call(this, graph);
     }
 });

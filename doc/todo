@@ -1,7 +1,9 @@
 Add dat.gui for global uniforms!
 Update dat.gui for neonflames -> color picker!
 
-max elevation = 3055
+fix z fighting by changing near plane depending on height or so
+fix skybox rendering depth
+fix terrain cracks
 
 #16 bit heightmap on ice
 UNPACK_COLORSPACE_CONVERSION_WEBGL =none
@@ -40,7 +42,6 @@ A lone tree
 Shadows/Ambient aperture
 
 Grass
-Water
 
 Collision detection
 
@@ -48,6 +49,9 @@ Collision detection
 Streaming
 Graceful degradation
 Turn it into a proper game
+
+use min/max heights -> better LOD
+use min/max height for clipping
 
 Experiment with more procedural effects
 

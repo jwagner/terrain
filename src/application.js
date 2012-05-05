@@ -15,7 +15,6 @@ function getHashValue(name, default_){
 var DEBUG = getHashValue('debug', false),
     PERF = getHashValue('perf', false),
     Q = getHashValue('Q', '1.0')*1.0,
-    FAR_AWAY = 10000,
     HEIGHTMAP = 'gfx/maui-diff.png',
     PerfHub = requires('engine.perfhub').PerfHub,
     perfhub = new PerfHub(),
@@ -45,26 +44,31 @@ function prepareScene(){
     sceneGraph = new scene.Graph();
 
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
+        waternormalsTexture = new glUtils.Texture2D(resources['gfx/waternormals.png']),
         terrainShader = shaderManager.get('terrain'),
         skyShader = shaderManager.get('sky'),
-        scale = 163840/2,
+        waterShader = shaderManager.get('water'),
+        scale = 75110,
         far_away = scale*2.0,
-        vscale = 6500;
+        vscale = 3055;
 
     globalUniforms = {
-        sunColor: [1.6, 1.47, 1.29],
-        sunDirection: [-1.0, 0.1, 0.0],
+        sunColor: [1.8, 1.75, 1.65],
+        sunDirection: [-1.0, 0.5, 0.0],
         horizonColor: [0.6, 0.7, 0.9],
-        zenithColor: [0.025, 0.1, 0.5]
-//        time: time
+        zenithColor: [0.025, 0.1, 0.5],
+        clip: 0.0,
+        mirror: 1.0,
+        time: time
     };
 
     vec3.normalize(globalUniforms.sunDirection);
 
+
     var fakeCamera = new scene.Camera([]),
         terrainTransform = new scene.Transform([
             new scene.Material(terrainShader, {
-                    color: [0.5, 0.3, 0.2],
+                    color: [0.2, 0.4, 0.2],
                     heightSampler: heightmapTexture
                 }, [
                     new terrain.QuadTree(fakeCamera, 64*Q, 6, far_away)
@@ -72,24 +76,47 @@ function prepareScene(){
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
+        reflectionTransform = new scene.Mirror([
+            new scene.Uniforms({mirror: -1, clip: 1.0}, [
+                terrainTransform, skyBox
+            ])
+        ]),
+        reflectionFBO = new glUtils.FBO(1024, 512, gl.FLOAT),
+        reflectionTarget = new scene.RenderTarget(reflectionFBO, [reflectionTransform]),
+        waterTransform = new scene.Transform([
+                new scene.Material(waterShader, {
+                        color: [0.2, 0.4, 0.8],
+                        normalSampler: waternormalsTexture,
+                        reflectionSampler: reflectionFBO
+                    }, [
+                        new scene.SimpleMesh(new glUtils.VBO(mesh.grid(1000)))
+                    ]
+                )
+        ]),
         globalUniformsNode = new scene.Uniforms(globalUniforms, [
-            terrainTransform, skyBox
+            reflectionTarget, terrainTransform, waterTransform, skyBox
         ]),
         camera = new scene.Camera([globalUniformsNode]);
-
-    vec3.set([scale/2, vscale/3, scale/2], camera.position);
+    vec3.set([scale/2, vscale/2, scale/2], camera.position);
+    //vec3.set([0, 1, 0], camera.position);
     vec3.set(camera.position, fakeCamera.position);
 
     fakeCamera.yaw = camera.yaw = 0.0;
     fakeCamera.pitch = camera.pitch = 0.0;
 
     fakeCamera.far = camera.far = far_away;
-    fakeCamera.near = camera.near = 1.0;
+    fakeCamera.near = camera.near = 10.0;
 
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
+    mat4.translate(terrainTransform.matrix, [0, -200, 0]);
     mat4.scale(terrainTransform.matrix, [scale, vscale, scale]);
+    mat4.translate(waterTransform.matrix, [-scale*5, 0, -scale*5]);
+    mat4.scale(waterTransform.matrix, [scale*10, 1, scale*10]);
+//    mat4.translate(waterTransform.matrix, [-scale*0.5, 0, -scale*0.5]);
+//    mat4.scale(waterTransform.matrix, [scale*1, 1, scale*1]);
 
     sceneGraph.root.append(camera);
+//    sceneGraph.root.append(reflectionTarget);
 
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
 
@@ -100,6 +127,7 @@ function prepareScene(){
 
     clock.ontick = function(td) {
         time += td;
+        globalUniforms.time = time;
         //gl.disable(gl.DEPTH_TEST);
         //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
         //gl.enable(gl.BLEND);
@@ -153,13 +181,16 @@ setStatus('loading data...');
 
 loader.load([
     HEIGHTMAP,
+    'gfx/waternormals.png',
     'shaders/transform.glsl',
     'shaders/noise2D.glsl',
     'shaders/atmosphere.glsl',
     'shaders/sky.frag',
     'shaders/sky.vertex',
     'shaders/terrain.frag',
-    'shaders/terrain.vertex'
+    'shaders/terrain.vertex',
+    'shaders/water.frag',
+    'shaders/water.vertex'
 
 ]);
 

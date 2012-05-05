@@ -64,6 +64,9 @@ Shader.prototype = {
             
             var location = this.uniformLocations[name],
                 value = values[name];
+
+            if(location === null) continue;
+
             if(value.uniform){
                 if(!value.equals(this.uniformValues[name])){
                     value.uniform(location);

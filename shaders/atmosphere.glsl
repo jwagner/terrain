@@ -6,7 +6,5 @@ vec3 atmosphereColor(vec3 rayDirection){
     vec3 skyColor = mix(horizonColor, zenithColor, a);
     float sunTheta = max( dot(rayDirection, sunDirection), 0.0 );
     float density = 0.00005;
-    return mix( skyColor, //vec3(0.2,0.5,0.66), 
-         sunColor*0.8, 
-         pow(sunTheta, 128.0));
+    return skyColor+sunColor*pow(sunTheta, 32.0)*0.5;
 }

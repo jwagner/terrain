@@ -36,6 +36,8 @@ Shading
 Texturing
 
 [Water]
+No clipping planes
+Don't use discard. Use min/max.
 
 [Demo]
 
