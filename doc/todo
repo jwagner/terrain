@@ -1,18 +1,27 @@
 Add dat.gui for global uniforms!
 Update dat.gui for neonflames -> color picker!
 
-fix z fighting by changing near plane depending on height or so
-fix skybox rendering depth
-fix terrain cracks
+investigate triplanar texturing
+http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
+investigate wangtiles or so for aperiodic textures
 
-#16 bit heightmap on ice
+fix z fighting by changing near plane depending on height or so
+#fix skybox rendering depth
+#fix terrain cracks
+
 UNPACK_COLORSPACE_CONVERSION_WEBGL =none
 
 clear|deactivate stencil buffer
 
 x Smooth gradients for normal calculation
 
+#scale water distortion by distance
+
+skybox reflections
+
 color grass by dot of surface to eye normal
+
+reflection culling wrong.
 
 
 Single texture

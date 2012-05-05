@@ -44,7 +44,7 @@ function prepareScene(){
     sceneGraph = new scene.Graph();
 
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
-        waternormalsTexture = new glUtils.Texture2D(resources['gfx/waternormals.png']),
+        waternormals3Texture = new glUtils.Texture2D(resources['gfx/waternormals3.png']),
         terrainShader = shaderManager.get('terrain'),
         skyShader = shaderManager.get('sky'),
         waterShader = shaderManager.get('water'),
@@ -53,8 +53,8 @@ function prepareScene(){
         vscale = 3055;
 
     globalUniforms = {
-        sunColor: [1.8, 1.75, 1.65],
-        sunDirection: [-1.0, 0.5, 0.0],
+        sunColor: [2.0, 1.75, 1.65],
+        sunDirection: [-1.0, 0.2, 0.0],
         horizonColor: [0.6, 0.7, 0.9],
         zenithColor: [0.025, 0.1, 0.5],
         clip: 0.0,
@@ -76,17 +76,18 @@ function prepareScene(){
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
-        reflectionTransform = new scene.Mirror([
-            new scene.Uniforms({mirror: -1, clip: 1.0}, [
-                terrainTransform, skyBox
-            ])
+        reflectionUniforms = new scene.Uniforms({mirror: -1, clip: 1.0}, [
+            new scene.Mirror([
+                terrainTransform
+            ]),
+            skyBox
         ]),
         reflectionFBO = new glUtils.FBO(1024, 512, gl.FLOAT),
-        reflectionTarget = new scene.RenderTarget(reflectionFBO, [reflectionTransform]),
+        reflectionTarget = new scene.RenderTarget(reflectionFBO, [reflectionUniforms]),
         waterTransform = new scene.Transform([
                 new scene.Material(waterShader, {
-                        color: [0.2, 0.4, 0.8],
-                        normalSampler: waternormalsTexture,
+                        color: [0.4, 0.5, 0.8],
+                        normalSampler: waternormals3Texture,
                         reflectionSampler: reflectionFBO
                     }, [
                         new scene.SimpleMesh(new glUtils.VBO(mesh.grid(1000)))
@@ -181,7 +182,7 @@ setStatus('loading data...');
 
 loader.load([
     HEIGHTMAP,
-    'gfx/waternormals.png',
+    'gfx/waternormals3.png',
     'shaders/transform.glsl',
     'shaders/noise2D.glsl',
     'shaders/atmosphere.glsl',

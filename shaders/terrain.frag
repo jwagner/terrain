@@ -69,11 +69,8 @@ void main(){
     vec3 ambient = vec3(0.2, 0.2, 0.3);
     vec3 albedo = (diffuse+0.5+ambient)*color;
     
-    float density = 0.00005;
     vec3 rayDirection = normalize(worldPosition-terrainCameraPosition);
-    float fog = exp(-dist*density);
-    vec3 atmosphere = atmosphereColor(rayDirection); 
-    albedo = mix(atmosphere, albedo, fog);
+    albedo = aerialPerspective(albedo, dist, rayDirection);
 
 
 //    gl_FragColor = vec4(vec3(dot(rayDirection))*0.5+0.5, 1.0);

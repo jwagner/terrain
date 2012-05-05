@@ -8,3 +8,10 @@ vec3 atmosphereColor(vec3 rayDirection){
     float density = 0.00005;
     return skyColor+sunColor*pow(sunTheta, 32.0)*0.5;
 }
+
+vec3 aerialPerspective(vec3 albedo, float dist, vec3 rayDirection){
+    float density = 0.00005;
+    float fog = exp(-dist*density);
+    vec3 atmosphere = atmosphereColor(rayDirection); 
+    return mix(atmosphere, albedo, fog);
+}
