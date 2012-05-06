@@ -75,10 +75,19 @@ function prepareScene(){
                 ]
             )
         ]),
+        lowresTerrainTransform = new scene.Transform([
+            new scene.Material(terrainShader, {
+                    color: [0.2, 0.4, 0.2],
+                    heightSampler: heightmapTexture
+                }, [
+                    new terrain.QuadTree(fakeCamera, 32*Q, 5, far_away)
+                ]
+            )
+        ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
         reflectionUniforms = new scene.Uniforms({mirror: -1, clip: 1.0}, [
             new scene.Mirror([
-                terrainTransform
+                lowresTerrainTransform
             ]),
             skyBox
         ]),
@@ -111,6 +120,7 @@ function prepareScene(){
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
     mat4.translate(terrainTransform.matrix, [0, -200, 0]);
     mat4.scale(terrainTransform.matrix, [scale, vscale, scale]);
+    mat4.set(terrainTransform.matrix, lowresTerrainTransform.matrix);
     mat4.translate(waterTransform.matrix, [-scale*5, 0, -scale*5]);
     mat4.scale(waterTransform.matrix, [scale*10, 1, scale*10]);
 //    mat4.translate(waterTransform.matrix, [-scale*0.5, 0, -scale*0.5]);
