@@ -73,8 +73,9 @@ scene.Graph.prototype = {
         this.statistics.vertices = 0;
 
         gl.viewport(0, 0, this.viewportWidth, this.viewportHeight);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        //gl.clear(gl.DEPTH_BUFFER_BIT);
+        //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        // only clearing DEPTH is supposedly faster
+        gl.clear(gl.DEPTH_BUFFER_BIT);
         //gl.enable(gl.DEPTH_TEST);
         this.root.visit(this);
     },

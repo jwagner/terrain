@@ -123,6 +123,7 @@ function prepareScene(){
 
     controller = new MouseController(input, camera);
     controller.velocity = 5000;
+    controller.velocity = 500;
 
     var outOfBody = false;
 
