@@ -15,9 +15,11 @@ uniform sampler2D heightSampler;
 
 varying vec3 worldPosition;
 uniform vec3 terrainCameraPosition;
+uniform vec3 eye;
 
 #include "atmosphere.glsl"
 #include "noise2D.glsl"
+#line 22
 
 float noize(vec2 uv){
     vec3 n = vec3(0.0);
@@ -64,12 +66,14 @@ void main(){
     vec3 s = (vec3(uvWidth.x, (right)*heightRatio, 0.0));
     vec3 t = (vec3(0.0, (bottom)*heightRatio, -uvWidth.y));
     vec3 n = normalize(cross(s, t));
+    float up = clamp(dot(vec3(0.0, 1.0, 0.0), n)*0.5-0.1, 0.0, 1.0);
+    vec3 color_ = mix(vec3(0.12, 0.1, 0.1), mix(vec3(0.5, 0.42, 0.2), vec3(0.15, 0.3, 0.1), clamp(worldPosition.y/10.0+0.1, 0.0, 1.0)), up);
     vec3 diffuse = max(dot(sunDirection, n), 0.0)*sunColor;
     /*gl_FragColor = vec4(color*dot(uvWidth, uvWidth)*100000.0, 1.0);*/
     vec3 ambient = vec3(0.2, 0.2, 0.3);
-    vec3 albedo = (diffuse+0.5+ambient)*color;
+    vec3 albedo = (diffuse+0.5+ambient)*color_;
     
-    vec3 rayDirection = normalize(worldPosition-terrainCameraPosition);
+    vec3 rayDirection = normalize(worldPosition-eye);
     albedo = aerialPerspective(albedo, dist, rayDirection);
 
 
@@ -77,7 +81,7 @@ void main(){
     gl_FragColor = vec4(albedo, 1.0);
     /*gl_FragColor = vec4(vec3(lod, morph, 0.0), 1.0);*/
 //    gl_FragColor = vec4(vec3(noize(uv*10.0)), 1.0);
-//    gl_FragColor = vec4(vec3(top), 1.0);
+    /*gl_FragColor = vec4(vec3(worldPosition.y/20.0), 1.0);*/
     /*gl_FragColor = vec4(0.0, 1.0, 0.0, 0.0)*lod;*/
     /*gl_FragColor += vec4(1.0, 0.0, 0.0, 0.0)*morph;*/
     /*//gl_FragColor = vec4(vec3(morph)+vec3(1.0, 0.0, 0.0), 1.0);*/

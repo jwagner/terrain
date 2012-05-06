@@ -13,6 +13,7 @@ uniform vec3 color;
 uniform float time;
 
 #include "atmosphere.glsl"
+#line 16
 
 
 vec3 sunLight(const vec3 surfaceNormal, const vec3 eyeNormal, float shiny, float spec, float diffuse){
@@ -24,7 +25,6 @@ vec3 sunLight(const vec3 surfaceNormal, const vec3 eyeNormal, float shiny, float
 }
 
 void main(){
-    float dist = gl_FragCoord.z/gl_FragCoord.w;
     vec2 uv0 = (worldPosition.xz/103.0)+vec2(time/17.0, time/29.0);
     vec2 uv1 = worldPosition.xz/107.0-vec2(time/-19.0, time/31.0);
     vec2 uv2 = worldPosition.xz/vec2(897.0, 983.0)+vec2(time/101.0, time/97.0);
@@ -35,15 +35,21 @@ void main(){
                  (texture2D(normalSampler, uv3));
     noise = noise*0.5-1.0;
     vec3 surfaceNormal = normalize(noise.xzy*vec3(2.0, 1.0, 2.0));
-    vec3 eyeNormal = normalize(eye-worldPosition);
+    vec3 eyeMinusWorld = eye-worldPosition;
+    float dist = length(eyeMinusWorld);
+    vec3 eyeNormal = normalize(eyeMinusWorld);
     vec2 screen = (projectedPosition.xy/projectedPosition.z + 1.0)*0.5;
 
-    vec2 distortion = surfaceNormal.xz/max(dist*0.0005, 30.0);
+    float distortionFactor = max(dist/250.0, 10.0);
+    vec2 distortion = surfaceNormal.xz/distortionFactor;
     vec3 reflectionSample = vec3(texture2D(reflectionSampler, screen+distortion));
 
     float theta1 = abs(dot(eyeNormal, surfaceNormal));
-    vec3 rf0 = vec3(0.02, 0.02, 0.02); // realtime rendering, page 236
-    vec3 reflectance = rf0 + (1.0 - rf0)*pow((1.0 - theta1), 5.0);
+    float rf0 = 0.02; // realtime rendering, page 236
+    float reflectance = rf0 + (1.0 - rf0)*pow((1.0 - theta1), 5.0);
+
+    // hacky
+    reflectance = min(reflectance+dist/25000.0, 0.9);
 
 
     vec3 rayDirection = normalize(worldPosition-eye);
@@ -53,7 +59,8 @@ void main(){
     albedo = aerialPerspective(albedo, dist, rayDirection);
 
     gl_FragColor = vec4(albedo, 1.0);
-    /*gl_FragColor = vec4(distortion, 0.0, 1.0);*/
+    /*gl_FragColor = vec4(reflectance, 0.0, 0.0, 1.0);*/
+//    gl_FragColor = vec4(distortion*10.0, 0.0, 1.0);
 
 //    gl_FragColor = vec4(vec3(fract(uv), 1.0), 1.0);
 }

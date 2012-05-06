@@ -50,7 +50,7 @@ function prepareScene(){
         waterShader = shaderManager.get('water'),
         scale = 75110,
         far_away = scale*2.0,
-        vscale = 3055;
+        vscale = 6055;
 
     globalUniforms = {
         sunColor: [2.0, 1.75, 1.65],
@@ -133,7 +133,7 @@ function prepareScene(){
 
     controller = new MouseController(input, camera);
     controller.velocity = 5000;
-    controller.velocity = 500;
+    //controller.velocity = 500;
 
     var outOfBody = false;
 

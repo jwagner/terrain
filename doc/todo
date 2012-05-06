@@ -5,7 +5,7 @@ investigate triplanar texturing
 http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
 investigate wangtiles or so for aperiodic textures
 
-fix clipping hack
+fix clipping hack -> try oblique frustums
 
 fix z fighting by changing near plane depending on height or so
 #fix skybox rendering depth
