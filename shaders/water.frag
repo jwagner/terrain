@@ -40,7 +40,7 @@ void main(){
     vec3 eyeNormal = normalize(eyeMinusWorld);
     vec2 screen = (projectedPosition.xy/projectedPosition.z + 1.0)*0.5;
 
-    float distortionFactor = max(dist/250.0, 10.0);
+    float distortionFactor = max(dist/100.0, 10.0);
     vec2 distortion = surfaceNormal.xz/distortionFactor;
     vec3 reflectionSample = vec3(texture2D(reflectionSampler, screen+distortion));
 

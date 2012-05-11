@@ -85,7 +85,7 @@ function prepareScene(){
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
-        reflectionUniforms = new scene.Uniforms({mirror: -1, clip: 1.0}, [
+        reflectionUniforms = new scene.Uniforms({mirror: -1, clip: 10.0}, [
             new scene.Mirror([
                 lowresTerrainTransform
             ]),
