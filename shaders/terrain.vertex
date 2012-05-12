@@ -50,18 +50,6 @@ void main(){
 
     worldPosition4 = modelTransform*vec4(morphedPosition.x, heightSample, morphedPosition.y, 1.0);
     worldPosition = vec3(worldPosition4);
-    vec4 worldPosition4Mirror = worldPosition4*vec4(1.0, mirror, 1.0, 1.0);
 
-    gl_Position = worldViewProjection*(worldPosition4Mirror);
-
-    if(clip > 0.0){
-        if(worldPosition4Mirror.y >= clip){
-            gl_Position.w = -1.0;
-        }
-    }
-    if(clip < 0.0){
-        if(worldPosition4Mirror.y <= clip){
-            gl_Position.w = -1.0;
-        }
-    }
+    gl_Position = worldViewProjection*(worldPosition4);
 }

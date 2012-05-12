@@ -85,14 +85,14 @@ function prepareScene(){
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
-        reflectionUniforms = new scene.Uniforms({mirror: 1.0, clip: 0.0}, [
+        reflectionFBO = new glUtils.FBO(1024, 512, gl.FLOAT),
+        reflectionTarget = new scene.RenderTarget(reflectionFBO, [
             new scene.Mirror(vec3.create([0.0, -1.0, 0.0]), [
                 lowresTerrainTransform
             ]),
             skyBox
+
         ]),
-        reflectionFBO = new glUtils.FBO(1024, 512, gl.FLOAT),
-        reflectionTarget = new scene.RenderTarget(reflectionFBO, [reflectionUniforms]),
         waterTransform = new scene.Transform([
                 new scene.Material(waterShader, {
                         color: [0.4, 0.5, 0.8],
@@ -121,8 +121,11 @@ function prepareScene(){
    // mat4.rotate(terrainTransform.matrix, Math.PI/2, [1, 0, 0]);
     mat4.translate(terrainTransform.matrix, [0, -200, 0]);
     mat4.scale(terrainTransform.matrix, [scale, vscale, scale]);
+
     mat4.set(terrainTransform.matrix, lowresTerrainTransform.matrix);
-    mat4.translate(waterTransform.matrix, [-scale*5, 0, -scale*5]);
+
+    // y is a bias to fix reflection boundaries
+    mat4.translate(waterTransform.matrix, [-scale*5, -20, -scale*5]);
     mat4.scale(waterTransform.matrix, [scale*10, 1, scale*10]);
 //    mat4.translate(waterTransform.matrix, [-scale*0.5, 0, -scale*0.5]);
 //    mat4.scale(waterTransform.matrix, [scale*1, 1, scale*1]);
