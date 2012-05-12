@@ -173,7 +173,7 @@ scene.Camera.prototype = extend({}, scene.Node.prototype, {
     getInverseRotation: function () {
         return mat3.toMat4(mat4.toInverseMat3(this.getWorldView()));
     },
-    getRotationOnly: function () {
+    getRottionOnly: function () {
         return mat3.toMat4(mat4.toInverseMat3(this.getWorldView()));
     },
     getProjection: function (graph) {
@@ -238,17 +238,70 @@ scene.Transform.prototype = extend({}, scene.Node, {
     }
 });
 
-scene.Mirror = function MirrorNode(children){
-    scene.Transform.call(this, children);
+function sign(x){
+    return x >= 0 ? 1 : -1;
+}
+
+
+scene.Mirror = function MirrorNode(plane, children){
+    scene.Node.call(this, children);
+    var a = plane[0],
+        b = plane[1],
+        c = plane[2];
+    this._plane = vec4.create([plane[0], plane[1], plane[2], 0]);
+    this._viewPlane = vec4.create();
+    this._q = vec4.create();
+    this._c = vec4.create();
+    this._projection = mat4.create();
+    this._worldView = mat4.create([
+        1.0-(2*a*a), 0.0-(2*a*b), 0.0-(2*a*c), 0.0,
+        0.0-(2*a*b), 1.0-(2*b*b), 0.0-(2*b*c), 0.0,
+        0.0-(2*a*c), 0.0-(2*b*c), 1.0-(2*c*c), 0.0,
+        0.0, 0.0, 0.0, 1.0
+    ]);
+    //mat4.identity(this._worldView);
+    this._worldView_ = mat4.create();
+    this._worldViewProjection = mat4.create();
 };
-scene.Mirror.prototype = extend({}, scene.Transform.prototype, {
+scene.Mirror.prototype = extend({}, scene.Node.prototype, {
     enter: function (graph) {
+        graph.pushUniforms();
         gl.cullFace(gl.FRONT);
-        scene.Transform.prototype.enter.call(this, graph);
+        //
+
+        var worldView = graph.uniforms.worldView,
+            projection = mat4.set(graph.uniforms.projection, this._projection),
+            p = this._viewPlane,
+            q = this._q,
+            c = this._c,
+            // TODO calculate proper distance
+            w = -graph.uniforms.eye[1];
+
+        mat4.multiplyVec4(worldView, this._plane, p);
+        p[3] = w;
+        graph.uniforms.worldView = mat4.multiply(graph.uniforms.worldView, this._worldView, this._worldView_);
+
+        q[0] = (sign(p.x) + projection[8]) / projection[0];
+        q[1] = (sign(p.y) + projection[9]) / projection[5];
+        q[2] = -1;
+        q[3] = (1.0+projection[10] ) / projection[14];
+
+        // scaled plane
+        var dotpq = p[0]*q[0] + p[1]*q[1] + p[2]*q[2] + p[3]*q[3];
+        c = vec4.scale(p, 2.0/dotpq);
+
+        projection[2] = c[0];
+        projection[6] = c[1];
+        projection[10] = c[2] + 1.0;
+        projection[14] = c[3];
+
+        graph.uniforms.worldViewProjection = mat4.multiply(projection, this._worldView_, this._worldViewProjection);
+        graph.uniforms.projection = projection;
+        
     },
     exit: function (graph) {
+        graph.popUniforms();
         gl.cullFace(gl.BACK);
-        scene.Transform.prototype.exit.call(this, graph);
     }
 });
 

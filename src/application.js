@@ -85,8 +85,8 @@ function prepareScene(){
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
-        reflectionUniforms = new scene.Uniforms({mirror: -1, clip: 10.0}, [
-            new scene.Mirror([
+        reflectionUniforms = new scene.Uniforms({mirror: 1.0, clip: 0.0}, [
+            new scene.Mirror(vec3.create([0.0, -1.0, 0.0]), [
                 lowresTerrainTransform
             ]),
             skyBox
@@ -104,6 +104,7 @@ function prepareScene(){
                 )
         ]),
         globalUniformsNode = new scene.Uniforms(globalUniforms, [
+            //reflectionUniforms
             reflectionTarget, terrainTransform, waterTransform, skyBox
         ]),
         camera = new scene.Camera([globalUniformsNode]);

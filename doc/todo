@@ -1,6 +1,8 @@
 Add dat.gui for global uniforms!
 Update dat.gui for neonflames -> color picker!
 
+reverse operands of scene.Transform?
+
 fix clipping hack -> try oblique frustums
 create mirror node
 transform mirror plane with inverse of thee transpose of the view projection matrix.
