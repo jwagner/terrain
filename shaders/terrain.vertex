@@ -48,8 +48,10 @@ void main(){
     /*t = normalize(vec3(0.0, (bottom-top)*a, -1.0));*/
     /*n = cross(s, t);*/
 
+
     worldPosition4 = modelTransform*vec4(morphedPosition.x, heightSample, morphedPosition.y, 1.0);
     worldPosition = vec3(worldPosition4);
 
     gl_Position = worldViewProjection*(worldPosition4);
+
 }

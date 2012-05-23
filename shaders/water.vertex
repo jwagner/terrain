@@ -2,6 +2,7 @@ attribute vec3 position;
 
 uniform mat4 modelTransform;
 uniform mat4 worldViewProjection;
+
 varying vec3 worldPosition;
 varying vec4 projectedPosition;
 
