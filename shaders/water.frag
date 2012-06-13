@@ -26,9 +26,9 @@ void sunLight(const vec3 surfaceNormal, const vec3 eyeDirection, float shiny, fl
 
 vec4 getNoise(vec2 uv){
     vec2 uv0 = (uv/103.0)+vec2(time/17.0, time/29.0);
-    vec2 uv1 = uv/107.0-vec2(time/-19.0, time/31.0);
-    vec2 uv2 = uv/vec2(897.0, 983.0)+vec2(time/101.0, time/97.0);
-    vec2 uv3 = uv/vec2(991.0, 877.0)-vec2(time/109.0, time/-113.0);
+    vec2 uv1 = uv/107.0-vec2(time/-19.0, time/31.0)+vec2(0.23);
+    vec2 uv2 = uv/vec2(897.0, 983.0)+vec2(time/101.0, time/97.0)+vec2(0.51);
+    vec2 uv3 = uv/vec2(991.0, 877.0)-vec2(time/109.0, time/-113.0)+vec2(0.71);
     vec4 noise = (texture2D(normalSampler, uv0)) +
                  (texture2D(normalSampler, uv1)) +
                  (texture2D(normalSampler, uv2)) +
@@ -54,7 +54,6 @@ void main(){
     float distortionFactor = max(dist/100.0, 10.0);
     vec2 distortion = surfaceNormal.xz/distortionFactor;
     vec3 reflectionSample = vec3(texture2D(reflectionSampler, screen+distortion));
-    vec3 refractionSample = vec3(texture2D(refractionSampler, screen+distortion));
 
     /*gl_FragColor = vec4(color*(reflectionSample+vec3(0.1))*(diffuse+specular+0.3)*2.0, 1.0);*/
 
@@ -71,7 +70,7 @@ void main(){
     vec3 rayDirection = normalize(worldPosition-eye);
     vec3 light = specular+diffuse;// sunLight(surfaceNormal, eyeDirection, 100.0, 5.0, 0.5)+0.5;
     vec3 scatter = max(0.0, dot(surfaceNormal, eyeDirection))*vec3(0.0, 0.2, 0.14);
-    vec3 albedo = mix((scatter+(refractionSample*diffuse))*0.3, (vec3(0.1)+reflectionSample*0.9+specular), reflectance);
+    vec3 albedo = mix(scatter*0.3, (vec3(0.1)+reflectionSample*0.9+specular), reflectance);
 
     albedo = aerialPerspective(albedo, dist, rayDirection);
     gl_FragColor = vec4(albedo, 1.0);
