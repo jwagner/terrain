@@ -80,7 +80,7 @@ function prepareScene(){
                     color: [0.2, 0.4, 0.2],
                     heightSampler: heightmapTexture
                 }, [
-                    new terrain.QuadTree(fakeCamera, 32*Q, 5, far_away)
+                    new terrain.QuadTree(fakeCamera, 32*Q, 4, far_away)
                 ]
             )
         ]),

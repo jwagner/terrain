@@ -13,7 +13,8 @@ uniform vec3 color;
 uniform float time;
 
 #include "atmosphere.glsl"
-#line 16
+#include "noise2D.glsl"
+#line 17
 
 
 void sunLight(const vec3 surfaceNormal, const vec3 eyeDirection, float shiny, float spec, float diffuse,
@@ -37,21 +38,24 @@ vec4 getNoise(vec2 uv){
 }
 
 void main(){
-    vec4 noise = getNoise(worldPosition.xz);
-    vec3 surfaceNormal = normalize(noise.xzy*vec3(2.0, 1.0, 2.0));
-
     vec3 diffuse = vec3(0.0);
     vec3 specular = vec3(0.0);
 
     vec3 worldToEye = eye-worldPosition;
     vec3 eyeDirection = normalize(worldToEye);
+
+    vec2 uv = worldPosition.xz*0.5;
+    vec4 noise = getNoise(uv);
+    float dist = length(worldToEye);
+    float distortionFactor = max(dist/100.0, 10.0);
+
+    vec3 surfaceNormal = normalize(noise.xzy*vec3(2.0, clamp(dist*0.001, 1.0, 100.0), 2.0));
+
     sunLight(surfaceNormal, eyeDirection, 100.0, 2.0, 0.5, diffuse, specular);
 
-    float dist = length(worldToEye);
 
     vec2 screen = (projectedPosition.xy/projectedPosition.z + 1.0)*0.5;
 
-    float distortionFactor = max(dist/100.0, 10.0);
     vec2 distortion = surfaceNormal.xz/distortionFactor;
     vec3 reflectionSample = vec3(texture2D(reflectionSampler, screen+distortion));
 
@@ -74,6 +78,7 @@ void main(){
 
     albedo = aerialPerspective(albedo, dist, rayDirection);
     gl_FragColor = vec4(albedo, 1.0);
+    /*gl_FragColor = vec4(fract(uv), 0.0, 1.0);*/
 
     /*gl_FragColor = vec4(reflectance, 0.0, 0.0, 1.0);*/
 //    gl_FragColor = vec4(distortion*10.0, 0.0, 1.0);
