@@ -55,7 +55,7 @@ function prepareScene(){
     globalUniforms = {
         sunColor: [2.0, 1.75, 1.65],
         sunDirection: [-1.0, 0.2, 0.0],
-        horizonColor: [0.6, 0.7, 0.9],
+        horizonColor: [0.6, 0.7, 1.0],
         zenithColor: [0.025, 0.1, 0.5],
         clip: 0.0,
         mirror: 1.0,
