@@ -40,10 +40,29 @@ var DEBUG = getHashValue('debug', false),
 
 console.log('DEBUG=' + DEBUG);
 
+function getImageData(i){
+    var e = document.createElement('canvas'),
+        c = e.getContext('2d');
+    e.width = i.width;
+    e.height = i.height;
+    c.drawImage(i, 0, 0);
+    document.body.appendChild(e);
+    return c.getImageData(0, 0, e.width, e.height);
+}
+
+function sampleHeight(img, u, v){
+    if(u < 0 || u > 1 || v < 0 || v > 1) return 0.0;
+    var x = ~~(img.width*u),
+        y = ~~(img.height*v),
+        i = (y*img.width+x)*4+3;
+    return img.data[i]/255;
+}
+
 function prepareScene(){
     sceneGraph = new scene.Graph();
 
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
+        heightData = getImageData(resources[HEIGHTMAP]),
         waternormals3Texture = new glUtils.Texture2D(resources['gfx/waternormals3.png']),
         terrainShader = shaderManager.get('terrain'),
         skyShader = shaderManager.get('sky'),
@@ -139,7 +158,9 @@ function prepareScene(){
     controller.velocity = 5000;
     //controller.velocity = 500;
 
-    var outOfBody = false;
+    var outOfBody = false,
+        inverseterrainTransform = mat4.inverse(terrainTransform.matrix, mat4.create()),
+        uv = vec3.create();
 
     clock.ontick = function(td) {
         time += td;
@@ -155,13 +176,22 @@ function prepareScene(){
         }
         controller.tick(td);
 
-        debug.innerHTML = (
-            'drawCalls: ' + sceneGraph.statistics.drawCalls + '<br>' +
-            'vertices: ' + ~~(sceneGraph.statistics.vertices/1000) + 'k<br>' +
-            'triangles: ' + ~~(sceneGraph.statistics.vertices/3000) + 'k<br>'
-        );
+        if(PERF){
+            debug.innerHTML = (
+                'drawCalls: ' + sceneGraph.statistics.drawCalls + '<br>' +
+                'vertices: ' + ~~(sceneGraph.statistics.vertices/1000) + 'k<br>' +
+                'triangles: ' + ~~(sceneGraph.statistics.vertices/3000) + 'k<br>'
+            );
+        }
 
         if(!outOfBody){
+            // collision detection
+            mat4.multiplyVec3(inverseterrainTransform, camera.position, uv);
+            var height = sampleHeight(heightData, uv[0], 1.0-uv[2]),
+                delta = height-uv[1]+0.1;
+            if(delta > 0){
+                camera.position[1] += delta*vscale;
+            }
             vec3.set(camera.position, fakeCamera.position);
             fakeCamera.yaw = camera.yaw;
             fakeCamera.pitch = camera.pitch;
