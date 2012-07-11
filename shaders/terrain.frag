@@ -55,8 +55,8 @@ void main(){
     vec2 uvWidth = vec2(0.001);
     uvWidth = vec2(1.0/4096.0)*9.0;
 //    uvWidth = fwidth(uv)*2.0;
-    vec2 dx = vec2(uvWidth.x, 0.0);
-    vec2 dy = vec2(0.0, uvWidth.y);
+    /*vec2 dx = vec2(uvWidth.x, 0.0);*/
+    /*vec2 dy = vec2(0.0, uvWidth.y);*/
     vec4 c = texture2D(heightSampler, uv, 3.0);
     float top = c.a;
     float left = c.a;
