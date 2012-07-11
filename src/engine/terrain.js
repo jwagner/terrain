@@ -235,9 +235,9 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         mat4.multiplyVec3(modelTransform, [0, 0, 0], this.topLeftWorldSpace);
         mat4.multiplyVec4(modelTransform, [1, 1, 1, 0], this.scaleWorldSpace);
         // optimize me
-        var mvp = mat4.create();
-        mat4.multiply(this.camera.getProjection(graph), this.camera.getWorldView(), mvp);
-        frustum.extract(mvp, this.frustum);
+ //       var mvp = mat4.create();
+//        mat4.multiply(this.camera.getProjection(graph), this.camera.getWorldView(), mvp);
+        frustum.extract(graph.uniforms.worldViewProjection, this.frustum);
         assert(this.scaleWorldSpace[0] == this.scaleWorldSpace[2], 'world space scale should be uniform');
         this.worldScale = this.scaleWorldSpace[0];
         this.worldHeight = this.scaleWorldSpace[1];
