@@ -78,6 +78,7 @@ void main(){
 
     albedo = aerialPerspective(albedo, dist, rayDirection);
     gl_FragColor = vec4(albedo, 1.0);
+    /*gl_FragColor = vec4(reflectionSample, 1.0);*/
     /*gl_FragColor = vec4(fract(uv), 0.0, 1.0);*/
 
     /*gl_FragColor = vec4(reflectance, 0.0, 0.0, 1.0);*/

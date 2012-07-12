@@ -38,7 +38,7 @@ float noize(vec2 uv){
 }
 
 float height(vec2 uv){
-    /*return noize(uv*10.0);//*/
+    /*return noize(uv*10.0);*/
     return texture2D(heightSampler, uv, 0.0).r;
 //    vec2 d = vec2(0.004);
 //    return (texture2D(heightSampler, uv, 3.0).r+texture2D(heightSampler, uv+d).r+texture2D(heightSampler, uv-d)+texture2D(heightSampler, uv+d.yx)+texture2D(heightSampler, uv-d.yx)).r*(1.0/6.0);
@@ -47,7 +47,7 @@ float height(vec2 uv){
 void main(){
 //  gl_FragColor = vec4(color, 1.0);
 //    vec3 diffuse = max(dot(sunDirection, normalize(n)), 0.0)*sunColor;
-    float dist = gl_FragCoord.z/gl_FragCoord.w;
+    float dist = length(worldPosition-eye);
 
     // calculate normal
     // 6500/2^14.. 2.5
