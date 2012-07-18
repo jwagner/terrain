@@ -14,8 +14,10 @@ function getHashValue(name, default_){
 
 var DEBUG = getHashValue('debug', false),
     PERF = getHashValue('perf', false),
-    Q = getHashValue('Q', '1.0')*1.0,
+    Q = getHashValue('Q', '1')*1.0,
     HEIGHTMAP = 'gfx/maui-diff.png',
+    HIGH_LOD = 4,
+    LOW_LOD = 2,
     PerfHub = requires('engine.perfhub').PerfHub,
     perfhub = new PerfHub(),
     scene = requires('engine.scene'),
@@ -46,7 +48,7 @@ function getImageData(i){
     e.width = i.width;
     e.height = i.height;
     c.drawImage(i, 0, 0);
-    document.body.appendChild(e);
+    //document.body.appendChild(e);
     return c.getImageData(0, 0, e.width, e.height);
 }
 
@@ -78,29 +80,30 @@ function prepareScene(){
         zenithColor: [0.025, 0.1, 0.5],
         clip: 0.0,
         mirror: 1.0,
-        time: time
+        time: time,
+        wireframe: false
     };
 
     vec3.normalize(globalUniforms.sunDirection);
 
 
     var fakeCamera = new scene.Camera([]),
+        terrainTree = new terrain.QuadTree(fakeCamera, 64, HIGH_LOD, far_away/4),
         terrainTransform = new scene.Transform([
             new scene.Material(terrainShader, {
                     color: [0.2, 0.4, 0.2],
                     heightSampler: heightmapTexture
-                }, [
-                    new terrain.QuadTree(fakeCamera, 64*Q, 6, far_away)
-                ]
+                },
+                [terrainTree]
             )
         ]),
+        lowresTerrainTree = new terrain.QuadTree(fakeCamera, 32, HIGH_LOD/2, far_away/4),
         lowresTerrainTransform = new scene.Transform([
             new scene.Material(terrainShader, {
                     color: [0.2, 0.4, 0.2],
                     heightSampler: heightmapTexture
-                }, [
-                    new terrain.QuadTree(fakeCamera, 32*Q, 4, far_away)
-                ]
+                },
+                [lowresTerrainTree]
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
@@ -127,11 +130,12 @@ function prepareScene(){
             reflectionTarget, terrainTransform, waterTransform, skyBox
         ]),
         camera = new scene.Camera([globalUniformsNode]);
-    vec3.set([scale/2, vscale/2, scale/2], camera.position);
+    window.camera = camera;
+    vec3.set([26244.78125, 509.8193359375, 57317.26953125], camera.position);
     //vec3.set([0, 1, 0], camera.position);
     vec3.set(camera.position, fakeCamera.position);
 
-    fakeCamera.yaw = camera.yaw = 0.0;
+    fakeCamera.yaw = camera.yaw = -1.8244;
     fakeCamera.pitch = camera.pitch = 0.0;
 
     fakeCamera.far = camera.far = far_away;
@@ -215,6 +219,42 @@ function prepareScene(){
         console.log(key);
     };
 
+    $('.wireframe').click(function(){
+        terrainTree.setWireFrame(!terrainTree.wireframe);
+        globalUniforms.wireframe = terrainTree.wireframe;
+    });
+
+    $('.fullscreen').click(function(){
+        if(canvas.webkitRequestFullScreen){
+            canvas.webkitRequestFullScreen(canvas.ALLOW_KEYBOARD_INPUT);
+        }
+        else if(canvas.mozRequestFullScreen){
+            canvas.mozRequestFullScreen();
+        }
+        else if(canvas.requestFullScreen){
+            canvas.requestFullScreen();
+        }
+        else {
+            alert('no fullscreen support');
+        }
+    });
+
+    $('.hq').click(function() {
+        setLod(HIGH_LOD);
+        $('.lq').addClass('active');
+        $(this).removeClass('active');
+    }); 
+    $('.lq').click(function() {
+        setLod(LOW_LOD);
+        $('.hq').addClass('active');
+        $(this).removeClass('active');
+    }); 
+
+    function setLod(lod){
+        terrainTree.depth = lod;
+        lowresTerrainTree.depth = lod/2;
+    }
+
 
 }
 
@@ -243,10 +283,10 @@ loader.load([
 // all assets have been loaded
 function ready(){
     $('#loading').hide();
-    $('canvas').show();
+    $('canvas').css({display: 'block'});
     glUtils.getContext(canvas, {debug: DEBUG, standard_derivatives: true, texture_float: true, vertex_texture_units: 2});
     prepareScene();
-    glUtils.fullscreen(canvas, sceneGraph, document.body);
+    glUtils.fullscreen(canvas, sceneGraph, $('#cc')[0]);
     clock.start(canvas);
 }
 
@@ -271,6 +311,9 @@ glUtils.onerror = function(canvas, reason, code) {
     window._gaq.push(['_trackEvent', 'terrain', 'webgl-error', code]);
     alert(reason);
     $('#youtube').show();
+    $('#youtube iframe').attr('src', $('#youtube iframe').data('src'));
+    $('#perfhub').hide();
+    $('#menu').hide();
     $(canvas).hide();
 };
 

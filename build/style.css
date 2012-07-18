@@ -8,70 +8,94 @@ html, body{
   font-size: 12px;
   font-family: Michroma, sans-serif;
 }
+#header {
+    width: 100%;
+    height: 40px;
+    padding: 8px;
+}
+#cc, #youtube {
+    position: absolute;
+    top: 83px;
+    bottom: 25px;
+    left: 0;
+    right: 0;
+}
+#youtube {
+    display: none;
+}
+#youtube iframe {
+    width: 100%;
+    height: 100%;
+}
 #c {
   z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0;
-  overflow: hidden;
   display: none;
 }
-#header > * {
-  z-index: 100;
+
+#header #social {
+    position: absolute;
+    right: 0;
+    top: 32px;
 }
 
-#social {
-  position: absolute;
-  left: 380px;
-  top: 15px;
-  height: 10px;
-  width: 300px;
-}
 #social > * {
-  float: left;
+  display: inline;
   opacity: 0.5;
 }
 #social > *:hover {
   opacity: 1.0;
 }
 
-#header h1, #header p {
+#header > *{
+  display: inline-block;
+  vertical-align: baseline;
   color: #fff;
   opacity: 0.5;
-  position: absolute;
-  top: 10px;
-  left: 15px;
-  font-family: Michroma, sans-serif;
 }
 
-#header p { 
-  top: 18px;
-  left: 150px;
-}
-
-#header h1:hover, #header p:hover {
+#header > *:hover {
   opacity: 1.0;
 }
-#header h1 a, #header p a {
+#header a, #header a {
   color: #fff;
   text-decoration: none;
 }
 
+#header h1 {
+  padding-right: 8px;
+}
+
+#menu {
+    background-color: #333;
+    padding: 4px 0;
+}
+
+#menu > span {
+    padding: 0 8px;
+}
+
+.fullscreen, .wireframe, .hq.active, .lq.active {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 #footer {
   position: absolute;
-  bottom: 20px;
-  left: 10px;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
   color: white;
-  font-size: 12px;
-  z-index: 100;
   opacity: 0.5;
+  padding-left: 8px;
 }
 #footer:hover {
-  opacity: 1.0;
 }
 #footer a {
-  color: #c50000;
+  color: #ffffff;
+}
+#footer a:hover {
+  text-shadow: white 0 0 5px;
 }
 
 #loading {
@@ -84,12 +108,6 @@ html, body{
   letter-spacing: 0.3em;
 }
 
-#youtube {
-  display: none;
-  margin: 100px auto;
-  width: 1280px;
-  border: 1px solid #c50000;
-}
 
 #debug {
     z-index: 200;
@@ -99,13 +117,14 @@ html, body{
     width: 200px;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.8);
+    display: none;
 }
 
 #perfhub {
-    display: block;
+    display: none;
     position: absolute;
     z-index: 300;
-    top: 24px;
-    left: 24px;
+    top: 82px;
+    right: 0px;
     background-color: black;
 }

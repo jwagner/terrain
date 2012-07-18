@@ -202,13 +202,8 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth, viewDista
     this.scaleWorldSpace = vec4.create([0, 0, 0, 0]);
     this.worldScale = 1.0;
     this.worldHeight = 1.0;
+    this.vbo = this.vboGrid = new glUtils.VBO(mesh.grid(resolution));
 
-    if(this.wireframe){
-        this.vbo = new glUtils.VBO(mesh.wireFrame(mesh.grid(resolution)));
-    }
-    else {
-        this.vbo = new glUtils.VBO(mesh.grid(resolution));
-    }
     this.matrix = mat4.identity();
     this.inverseModelTransform = mat4.create();
     this.heightMapTransform = vec4.create();
@@ -216,6 +211,18 @@ terrain.QuadTree = function TerrainQuadTree(camera, resolution, depth, viewDista
     this.shader = null;
 };
 terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
+    setWireFrame: function(wireframe) {
+        if(this.wireframe === wireframe) return;
+        if(this.wireframe){
+            this.vboWireframe = this.vboWireframe || new glUtils.VBO(mesh.wireFrame(mesh.grid(this.resolution)));
+            this.vbo = this.vboWireframe;
+        }
+        else {
+            this.vbo = this.vboGrid;
+        }
+
+        this.wireframe = wireframe;
+    },
     visit: function(graph) {
         graph.pushUniforms();
         //gl state
@@ -265,7 +272,8 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         }
         var distance = Math.sqrt(distancePointAABBSquared(this.camera.position, aabb)),
             // 2.0 for parent scale
-            lodDistance = scale*this.viewDistance*2.0;
+        //  (3.732 = 2.0+sqrt(3)
+            lodDistance = scale*this.viewDistance*3.732;
 
         if(distance > lodDistance || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);
