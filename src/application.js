@@ -136,7 +136,7 @@ function prepareScene(){
     vec3.set(camera.position, fakeCamera.position);
 
     fakeCamera.yaw = camera.yaw = -1.8244;
-    fakeCamera.pitch = camera.pitch = 0.0;
+    fakeCamera.pitch = camera.pitch = 0.001;
 
     fakeCamera.far = camera.far = far_away;
     fakeCamera.near = camera.near = 10.0;

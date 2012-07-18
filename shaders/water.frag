@@ -76,7 +76,7 @@ void main(){
     vec3 scatter = max(0.0, dot(surfaceNormal, eyeDirection))*vec3(0.0, 0.2, 0.14);
     vec3 albedo = mix(scatter*0.3, (vec3(0.1)+reflectionSample*0.9+specular), reflectance);
 
-    albedo = aerialPerspective(albedo, dist, rayDirection);
+    albedo = aerialPerspective(albedo, dist, eye, rayDirection);
     gl_FragColor = vec4(albedo, 1.0);
     /*gl_FragColor = vec4(reflectionSample, 1.0);*/
     /*gl_FragColor = vec4(fract(uv), 0.0, 1.0);*/
