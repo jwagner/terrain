@@ -272,8 +272,7 @@ terrain.QuadTree.prototype = extend({}, scene.Node.prototype, {
         }
         var distance = Math.sqrt(distancePointAABBSquared(this.camera.position, aabb)),
             // 2.0 for parent scale
-        //  (3.732 = 2.0+sqrt(3)
-            lodDistance = scale*this.viewDistance*3.732;
+            lodDistance = scale*this.viewDistance*2;
 
         if(distance > lodDistance || level === this.depth){
             mat4.translate(this.matrix, [left, 0, top], this.matrix);

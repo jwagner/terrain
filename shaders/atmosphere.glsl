@@ -11,7 +11,7 @@ vec3 atmosphereColor(vec3 rayDirection){
 }
 
 vec3 aerialPerspective(vec3 albedo, float dist, vec3 rayDirection){
-    float density = 0.00002;
+    float density = 0.000015;
     //float fog = exp(-dist*density);
     float fog = exp(rayDirection.y*density) * (1.0-exp(-dist*rayDirection.y*density))/rayDirection.y;
     vec3 atmosphere = atmosphereColor(rayDirection); 

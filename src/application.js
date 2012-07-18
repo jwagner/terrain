@@ -16,8 +16,8 @@ var DEBUG = getHashValue('debug', false),
     PERF = getHashValue('perf', false),
     Q = getHashValue('Q', '1')*1.0,
     HEIGHTMAP = 'gfx/maui-diff.png',
-    HIGH_LOD = 4,
-    LOW_LOD = 2,
+    HIGH_LOD = 5,
+    LOW_LOD = 4,
     PerfHub = requires('engine.perfhub').PerfHub,
     perfhub = new PerfHub(),
     scene = requires('engine.scene'),
@@ -88,7 +88,7 @@ function prepareScene(){
 
 
     var fakeCamera = new scene.Camera([]),
-        terrainTree = new terrain.QuadTree(fakeCamera, 64, HIGH_LOD, far_away/4),
+        terrainTree = new terrain.QuadTree(fakeCamera, 64, HIGH_LOD, far_away),
         terrainTransform = new scene.Transform([
             new scene.Material(terrainShader, {
                     color: [0.2, 0.4, 0.2],
@@ -97,7 +97,7 @@ function prepareScene(){
                 [terrainTree]
             )
         ]),
-        lowresTerrainTree = new terrain.QuadTree(fakeCamera, 32, HIGH_LOD/2, far_away/4),
+        lowresTerrainTree = new terrain.QuadTree(fakeCamera, 32, HIGH_LOD>>1, far_away),
         lowresTerrainTransform = new scene.Transform([
             new scene.Material(terrainShader, {
                     color: [0.2, 0.4, 0.2],
@@ -219,6 +219,9 @@ function prepareScene(){
         console.log(key);
     };
 
+    $('.ghost').click(function(){
+        outOfBody = !outOfBody;
+    });
     $('.wireframe').click(function(){
         terrainTree.setWireFrame(!terrainTree.wireframe);
         globalUniforms.wireframe = terrainTree.wireframe;
@@ -252,7 +255,7 @@ function prepareScene(){
 
     function setLod(lod){
         terrainTree.depth = lod;
-        lowresTerrainTree.depth = lod/2;
+        lowresTerrainTree.depth = lod>>1;
     }
 
 

@@ -74,7 +74,7 @@ html, body{
     padding: 0 8px;
 }
 
-.fullscreen, .wireframe, .hq.active, .lq.active {
+.ghost, .fullscreen, .wireframe, .hq.active, .lq.active {
     cursor: pointer;
     text-decoration: underline;
 }
