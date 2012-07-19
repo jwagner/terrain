@@ -14,7 +14,7 @@ in the future.
 Notes
 =====
 
-Most of the relevant code is in src/engine/terrain.js
+Most of the relevant code is in *src/engine/terrain.js*
 Note that that code does currently not handle nodes whose distance is
 bigger than the max distance and there are probably more rough edges too.
 
