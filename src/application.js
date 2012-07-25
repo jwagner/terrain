@@ -159,7 +159,7 @@ function prepareScene(){
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 5000;
+    controller.velocity = 2000;
     //controller.velocity = 500;
 
     var outOfBody = false,
@@ -313,8 +313,8 @@ glUtils.onerror = function(canvas, reason, code) {
     window._gaq = window._gaq || [];
     window._gaq.push(['_trackEvent', 'terrain', 'webgl-error', code]);
     alert(reason);
-    $('#youtube').show();
-    $('#youtube iframe').attr('src', $('#youtube iframe').data('src'));
+    $('#video').show();
+    $('#video iframe').attr('src', $('#video iframe').data('src'));
     $('#perfhub').hide();
     $('#menu').hide();
     $(canvas).hide();
