@@ -12,7 +12,7 @@ uniform vec4 heightMapTransform;
 varying vec2 offset;
 varying vec2 uv;
 uniform sampler2D heightSampler;
-uniform bool wireframe;
+uniform float wireframe;
 
 varying vec3 worldPosition;
 uniform vec3 terrainCameraPosition;
@@ -79,7 +79,7 @@ void main(){
 
 
 //    gl_FragColor = vec4(vec3(dot(rayDirection))*0.5+0.5, 1.0);
-    if(wireframe){
+    if(wireframe == 1.0){
         gl_FragColor = vec4(vec3(lod, morph, 0.0), 1.0);
     }
     else {
