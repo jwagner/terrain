@@ -37,6 +37,7 @@ var DEBUG = getHashValue('debug', false),
     resources = loader.resources,
     shaderManager = new ShaderManager(resources),
     time = 0,
+    floatFormat,
     globalUniforms,
     controller;
 
@@ -61,6 +62,15 @@ function sampleHeight(img, u, v){
 }
 
 function prepareScene(){
+    if(gl.getExtension('OES_texture_half_float')){
+        floatFormat = gl.HALF_FLOAT;
+        gl.getExtension('OES_texture_half_float_linear');
+        console.log('half float');
+    }
+    else {
+        floatFormat = gl.FLOAT;
+        gl.getExtension('OES_texture_float_linear');
+    }
     sceneGraph = new scene.Graph();
 
     var heightmapTexture = new glUtils.Texture2D(resources[HEIGHTMAP]),
@@ -107,7 +117,7 @@ function prepareScene(){
             )
         ]),
         skyBox = new scene.Skybox(scale, skyShader, {}),
-        reflectionFBO = new glUtils.FBO(1024, 512, gl.FLOAT),
+        reflectionFBO = new glUtils.FBO(1024, 512, floatFormat),
         reflectionTarget = new scene.RenderTarget(reflectionFBO, [
             new scene.Mirror(vec3.create([0.0, -1.0, 0.0]), [
                 lowresTerrainTransform
@@ -159,7 +169,7 @@ function prepareScene(){
     gl.clearColor(0.5, 0.6, 0.8, 1.0);
 
     controller = new MouseController(input, camera);
-    controller.velocity = 5000;
+    controller.velocity = 2000;
     //controller.velocity = 500;
 
     var outOfBody = false,
@@ -313,8 +323,8 @@ glUtils.onerror = function(canvas, reason, code) {
     window._gaq = window._gaq || [];
     window._gaq.push(['_trackEvent', 'terrain', 'webgl-error', code]);
     alert(reason);
-    $('#youtube').show();
-    $('#youtube iframe').attr('src', $('#youtube iframe').data('src'));
+    $('#video').show();
+    $('#video iframe').attr('src', $('#video iframe').data('src'));
     $('#perfhub').hide();
     $('#menu').hide();
     $(canvas).hide();

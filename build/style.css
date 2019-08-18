@@ -13,17 +13,17 @@ html, body{
     height: 40px;
     padding: 8px;
 }
-#cc, #youtube {
+#cc, #video {
     position: absolute;
     top: 83px;
     bottom: 25px;
     left: 0;
     right: 0;
 }
-#youtube {
+#video {
     display: none;
 }
-#youtube iframe {
+#video iframe {
     width: 100%;
     height: 100%;
 }

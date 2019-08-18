@@ -12,7 +12,7 @@ uniform vec4 heightMapTransform;
 varying vec2 offset;
 varying vec2 uv;
 uniform sampler2D heightSampler;
-uniform bool wireframe;
+uniform float wireframe;
 
 varying vec3 worldPosition;
 uniform vec3 terrainCameraPosition;
@@ -68,7 +68,7 @@ void main(){
     vec3 t = (vec3(0.0, (bottom)*heightRatio, -uvWidth.y));
     vec3 n = normalize(cross(s, t));
     float up = clamp(dot(vec3(0.0, 1.0, 0.0), n)*0.5-0.1, 0.0, 1.0);
-    vec3 color_ = mix(vec3(0.12, 0.1, 0.1), mix(vec3(0.5, 0.42, 0.2), vec3(0.15, 0.3, 0.1), clamp(worldPosition.y/10.0+0.1, 0.0, 1.0)), up);
+    vec3 color_ = mix(vec3(0.12, 0.1, 0.1), vec3(0.15, 0.3, 0.1), up);
     vec3 diffuse = max(dot(sunDirection, n), 0.0)*sunColor;
     /*gl_FragColor = vec4(color*dot(uvWidth, uvWidth)*100000.0, 1.0);*/
     vec3 ambient = vec3(0.2, 0.2, 0.3);
@@ -79,7 +79,7 @@ void main(){
 
 
 //    gl_FragColor = vec4(vec3(dot(rayDirection))*0.5+0.5, 1.0);
-    if(wireframe){
+    if(wireframe == 1.0){
         gl_FragColor = vec4(vec3(lod, morph, 0.0), 1.0);
     }
     else {
