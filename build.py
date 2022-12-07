@@ -3,7 +3,7 @@ import json
 import os
 import sys
 import fnmatch
-from functools import partial
+from functools import partial, reduce
 from operator import add
 import re
 
@@ -29,11 +29,13 @@ function provides(namespace) {
 requires = provides;
 """
 
+
 def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
     if not os.path.isdir:
         raise OSError("'%r' is not a path" % path)
+
 
 def publish_debug(config, filename):
     root = os.path.abspath(config["src"])
@@ -42,15 +44,16 @@ def publish_debug(config, filename):
     url = config["srcurl"] + basename
     return os.path.relpath(filename, config["build"])
 
+
 def prepareconfig(config):
     base = {
-            "mode": "debug",
-            "src": "src",
-            "build": "build",
-            "provides": {},
-            "requires": {},
-            "globals": [],
-            "entrypoints": {"main": "browser"},
+        "mode": "debug",
+        "src": "src",
+        "build": "build",
+        "provides": {},
+        "requires": {},
+        "globals": [],
+        "entrypoints": {"main": "browser"},
     }
     base.update(config)
     for name in config["provides"].values():
@@ -58,6 +61,7 @@ def prepareconfig(config):
     mkdir(base["src"])
     mkdir(base["build"])
     return base
+
 
 def make(configfile="build.json", target=None, mode="debug"):
     if os.path.exists(configfile):
@@ -82,12 +86,14 @@ def make(configfile="build.json", target=None, mode="debug"):
         for asset_json, dirs in config["assets"].items():
             build_assets(asset_json, dirs)
 
+
 def handle_globals(globals_, order, provides):
     globals_ = [provides[i] for i in globals_]
     for g in globals_:
         if g in order:
             order.remove(g)
         order.insert(0, g)
+
 
 def gather_requirements(entrypoint, provides, requires):
     requirements = []
@@ -103,6 +109,7 @@ def gather_requirements(entrypoint, provides, requires):
         dependencies.extend(required[name])
     return required
 
+
 def build_debug_browser(config, order, entrypoint):
     with open(os.path.join(config["build"], entrypoint + ".js"), "w") as f:
         f.write(libstub)
@@ -110,6 +117,7 @@ def build_debug_browser(config, order, entrypoint):
             url = publish_debug(config, name)
             f.write("document.write('<script src=\"%s\" "
                     "type=\"text/javascript\"></script>');\n" % url)
+
 
 def build_release_browser(config, order, entrypoint):
     with open(os.path.join(config["build"], entrypoint + ".js"), "w") as f:
@@ -120,8 +128,10 @@ def build_release_browser(config, order, entrypoint):
                 f.write(f2.read())
         # todo: minimize
 
+
 def build_debug_qunit(config, order, filename):
     build_debug_browser(config, order, filename)
+
 
 def topsort(provides, requires):
     order = []
@@ -130,7 +140,7 @@ def topsort(provides, requires):
     changes = True
     while changes:
         changes = False
-        for filename, dependencies in requires.items():
+        for filename, dependencies in list(requires.items()):
             for dependency in dependencies:
                 if not dependency in provided:
                     break
@@ -148,7 +158,7 @@ def topsort(provides, requires):
 
 
 def scanfile(filename):
-    with open(filename, "rb") as f:
+    with open(filename, "r") as f:
         data = f.read()
     requires = []
     provides = {}
@@ -161,9 +171,9 @@ def scanfile(filename):
 
 def scan(srcdir):
     files = reduce(add,
-            (map(partial(os.path.join, p),
-                fnmatch.filter(f, "*.js"))
-            for  p, d, f in os.walk(srcdir)))
+                   (list(map(partial(os.path.join, p),
+                             fnmatch.filter(f, "*.js")))
+                    for p, d, f in os.walk(srcdir)))
     provides = {}
     requires = {}
     for filename in files:
@@ -174,14 +184,14 @@ def scan(srcdir):
 
 
 targets = {
-        "browser": {
-            "debug": build_debug_browser,
-            "release": build_release_browser
-        }
+    "browser": {
+        "debug": build_debug_browser,
+        "release": build_release_browser
+    }
 }
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-      make(mode=sys.argv[1])
+        make(mode=sys.argv[1])
     else:
-      make()
+        make()
